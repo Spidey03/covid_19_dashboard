@@ -43,3 +43,6 @@ class DetailsAlreadyExist(Exception):
 
 class InvalidDate(Exception):
     pass
+
+class UserNotAdmin(Exception):
+    pass

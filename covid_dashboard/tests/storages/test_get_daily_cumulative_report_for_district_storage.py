@@ -21,6 +21,20 @@ def test_get_daily_cumulative_report_for_district_storage(all_states, all_distri
     expected_result = DailyCumulativeReport(
         report = [
             CumulativeReportOnSpecificDay(
+                date=datetime.date(2020, 5, 20),
+                total_cases=0,
+                total_deaths=0,
+                total_recovered_cases=0,
+                active_cases=0
+            ),
+            CumulativeReportOnSpecificDay(
+                date=datetime.date(2020, 5, 21),
+                total_cases=0,
+                total_deaths=0,
+                total_recovered_cases=0,
+                active_cases=0
+            ),
+            CumulativeReportOnSpecificDay(
                 date=datetime.date(2020, 5, 22),
                 total_cases=6,
                 total_deaths=3,
@@ -36,19 +50,19 @@ def test_get_daily_cumulative_report_for_district_storage(all_states, all_distri
             ),
             CumulativeReportOnSpecificDay(
                 date=datetime.date(2020, 5, 24),
-                total_cases=28,
-                total_deaths=8,
-                total_recovered_cases=13,
-                active_cases=7
+                total_cases=57,
+                total_deaths=27,
+                total_recovered_cases=17,
+                active_cases=13
             ),
             CumulativeReportOnSpecificDay(
                 date=datetime.date(2020, 5, 25),
-                total_cases=28,
-                total_deaths=8,
-                total_recovered_cases=13,
-                active_cases=7
+                total_cases=87,
+                total_deaths=32,
+                total_recovered_cases=27,
+                active_cases=28
             )
-        ]
+        ] 
     )
 
     # Act

@@ -23,6 +23,7 @@ def api_wrapper(*args, **kwargs):
     request_data = kwargs['request_data']
     username = request_data['username']
     password = request_data['password']
+
     storage = UserStorageImplementation()
     presenter = PresenterImplementation()
     oauth_storage = OAuth2SQLStorage()

@@ -50,35 +50,35 @@ def test_get_response_for_get_state_wise_daily_report_presenter():
     expected_response =  [
         {
             'active_cases': 0,
-            'date': datetime.date(2020, 5, 20),
+            'date': str(datetime.date(2020, 5, 20).strftime('%d-%b-%Y')),
             'total_cases': 5,
             'total_deaths': 0,
             'total_recovered_cases': 5
         },
         {
             'active_cases': 10,
-            'date': datetime.date(2020, 5, 21),
+            'date': str(datetime.date(2020, 5, 21).strftime('%d-%b-%Y')),
             'total_cases': 20,
             'total_deaths': 0,
             'total_recovered_cases': 10
         },
         {
             'active_cases': 3,
-            'date': datetime.date(2020, 5, 22),
+            'date': str(datetime.date(2020, 5, 22).strftime('%d-%b-%Y')),
             'total_cases': 16,
             'total_deaths': 3,
             'total_recovered_cases': 10
         },
         {
             'active_cases': 14,
-            'date': datetime.date(2020, 5, 23),
+            'date': str(datetime.date(2020, 5, 23).strftime('%d-%b-%Y')),
             'total_cases': 27,
             'total_deaths': 5,
             'total_recovered_cases': 8
         },
         {
             'active_cases': 6,
-            'date': datetime.date(2020, 5, 24),
+            'date': str(datetime.date(2020, 5, 24).strftime('%d-%b-%Y')),
             'total_cases': 29,
             'total_deaths': 19,
             'total_recovered_cases': 4
@@ -157,56 +157,56 @@ def test_get_response_for_get_state_wise_daily_report_presenter_when_no_report_f
     ]
     expected_response = [
         {
-            'date': datetime.date(2020, 5, 22),
+            'date': str(datetime.date(2020, 5, 22).strftime('%d-%b-%Y')),
              'total_cases': 5,
              'total_deaths': 1,
              'total_recovered_cases': 2,
              'active_cases': 2
         },
         {
-            'date': datetime.date(2020, 5, 23),
+            'date': str(datetime.date(2020, 5, 23).strftime('%d-%b-%Y')),
              'total_cases': 10,
              'total_deaths': 3,
              'total_recovered_cases': 2,
              'active_cases': 5
         },
         {
-            'date': datetime.date(2020, 5, 24),
+            'date': str(datetime.date(2020, 5, 24).strftime('%d-%b-%Y')),
              'total_cases': 12,
              'total_deaths': 4,
              'total_recovered_cases': 2,
              'active_cases': 6
         },
         {
-            'date': datetime.date(2020, 5, 25),
+            'date': str(datetime.date(2020, 5, 25).strftime('%d-%b-%Y')),
              'total_cases': 0,
              'total_deaths': 0,
              'total_recovered_cases': 0,
              'active_cases': 0
         },
         {
-            'date': datetime.date(2020, 5, 26),
+            'date': str(datetime.date(2020, 5, 26).strftime('%d-%b-%Y')),
              'total_cases': 0,
              'total_deaths': 0,
              'total_recovered_cases': 0,
              'active_cases': 0
         },
         {
-            'date': datetime.date(2020, 5, 27),
+            'date': str(datetime.date(2020, 5, 27).strftime('%d-%b-%Y')),
              'total_cases': 0,
              'total_deaths': 0,
              'total_recovered_cases': 0,
              'active_cases': 0
         },
         {
-            'date': datetime.date(2020, 5, 28),
+            'date': str(datetime.date(2020, 5, 28).strftime('%d-%b-%Y')),
              'total_cases': 0,
              'total_deaths': 0,
              'total_recovered_cases': 0,
              'active_cases': 0
         },
         {
-            'date': datetime.date(2020, 5, 29),
+            'date': str(datetime.date(2020, 5, 29).strftime('%d-%b-%Y')),
              'total_cases': 0,
              'total_deaths': 0,
              'total_recovered_cases': 0,

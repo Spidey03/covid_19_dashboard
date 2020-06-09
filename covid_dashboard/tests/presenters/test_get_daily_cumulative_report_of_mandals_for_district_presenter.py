@@ -63,14 +63,14 @@ def test_get_response_for_daily_cumulative_report_of_mandals_for_district():
                 'mandal_name':'Kallur',
                 'daily_cumulative': [
                     {
-                        'date': datetime.date(2020, 5, 26),
+                        'date': str(datetime.date(2020, 5, 26).strftime('%d-%b-%Y')),
                         'total_cases': 5,
                         'total_deaths': 0,
                         'total_recovered_cases': 3,
                         'active_cases': 2
                     },
                     {
-                        'date': datetime.date(2020, 5, 27),
+                        'date': str(datetime.date(2020, 5, 27).strftime('%d-%b-%Y')),
                         'total_cases': 10,
                         'total_deaths': 3,
                         'total_recovered_cases': 5,
@@ -84,14 +84,14 @@ def test_get_response_for_daily_cumulative_report_of_mandals_for_district():
                 'mandal_name': 'Adoni',
                 'daily_cumulative': [
                     {
-                        'date': datetime.date(2020, 5, 30),
+                        'date': str(datetime.date(2020, 5, 30).strftime('%d-%b-%Y')),
                         'total_cases': 0,
                         'total_deaths': 0,
                         'total_recovered_cases': 0,
                         'active_cases': 0
                     },
                     {
-                        'date': datetime.date(2020, 5, 31),
+                        'date': str(datetime.date(2020, 5, 31).strftime('%d-%b-%Y')),
                         'total_cases': 5,
                         'total_deaths': 2,
                         'total_recovered_cases': 1,

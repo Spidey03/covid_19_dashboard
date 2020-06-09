@@ -17,7 +17,7 @@ def test_get_district_daily_cumulative_report_response_presenter():
                 'district_name': 'Kurnool',
                 'daily_cumulative': [
                     {
-                        'date': datetime.date(2020, 5, 26),
+                        'date': str(datetime.date(2020, 5, 26).strftime('%d-%b-%Y')),
                         'total_cases': 40,
                         'total_deaths': 3,
                         'total_recovered_cases': 37,
@@ -30,14 +30,14 @@ def test_get_district_daily_cumulative_report_response_presenter():
                 'district_name': 'Nellore',
                 'daily_cumulative': [
                     {
-                        'date': datetime.date(2020, 5, 26),
+                        'date': str(datetime.date(2020, 5, 26).strftime('%d-%b-%Y')),
                         'total_cases': 30,
                         'total_deaths': 3,
                         'total_recovered_cases': 27,
                         'active_cases': 0
                     },
                     {
-                        'date': datetime.date(2020, 5, 27),
+                        'date': str(datetime.date(2020, 5, 27).strftime('%d-%b-%Y')),
                         'total_cases': 40,
                         'total_deaths': 3,
                         'total_recovered_cases': 37,

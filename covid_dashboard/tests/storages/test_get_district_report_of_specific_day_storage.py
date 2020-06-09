@@ -32,21 +32,21 @@ def test_get_district_report_of_specific_day(all_states, all_districts, all_mand
             MandalReportOfDay(
                 mandal_id=2,
                 mandal_name='Adoni',
-                total_cases=0,
+                total_cases=7,
                 total_deaths=0,
                 total_recovered_cases=0
             ),
             MandalReportOfDay(
                 mandal_id=3,
                 mandal_name='Kodumur',
-                total_cases=0,
-                total_deaths=0,
-                total_recovered_cases=0
+                total_cases=17,
+                total_deaths=15,
+                total_recovered_cases=2
             )
         ],
-        total_cases=5,
-        total_deaths=4,
-        total_recovered_cases=2
+        total_cases=29,
+        total_deaths=19,
+        total_recovered_cases=4
     )
 
     # Act

@@ -43,3 +43,7 @@ INVALID_DISTRICT_ID = (
 INVALID_MANDAL_ID = (
     "mandal not found", "INVALID_MANDAL_ID"
 )
+
+USER_NOT_ADMIN = (
+    "you can access this", "USER_NOT_ADMIN"
+)

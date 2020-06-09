@@ -12,7 +12,8 @@ def test_get_daily_cumulative_report_response_presenter():
     expected_result = {
         "daily_cumulative":[
             {
-                "date":datetime.date(year=2020, month=5, day=28),
+                "date": str(datetime.date(year=2020, month=5, day=28)\
+                    .strftime('%d-%b-%Y')),
                 "total_cases":20,
                 "total_deaths":0,
                 "total_recovered_cases":20,

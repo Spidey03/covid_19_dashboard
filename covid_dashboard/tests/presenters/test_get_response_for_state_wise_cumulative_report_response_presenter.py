@@ -10,8 +10,8 @@ def test_get_response_for_state_wise_cumulative_report():
     # Arrange
     presenter = PresenterImplementation()
     expected_result = {
-    #   "state_name": "Andhrapradesh",
-      "state_id":1,
+      "state_name": "Andhrapradesh",
+      # "state_id":1,
     #   "date":datetime.date(year=2020, month=5, day=28),
       "districts": [
         {

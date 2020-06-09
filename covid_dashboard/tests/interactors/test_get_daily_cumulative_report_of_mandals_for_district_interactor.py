@@ -14,7 +14,7 @@ from covid_dashboard.interactors.storages.dtos\
         
 
 
-def test_get_daily_cumulative_report_of_mandals_for_district():
+def get_daily_cumulative_report_of_mandals_for_district():
     # Arrange
     import datetime
     district_id = 1
@@ -126,6 +126,8 @@ def test_get_daily_cumulative_report_of_mandals_for_district():
         storage=storage, presenter=presenter)
     storage.get_daily_cumulative_report_of_mandals_for_district\
         .return_value = report
+    storage._get_initial_and_final_date.return_value = \
+        (datetime.date(2020, 5, 23), datetime.date(2020, 5, 25))
     presenter.get_response_for_daily_cumulative_report_of_mandals_for_district\
         .return_value = expected_output
     

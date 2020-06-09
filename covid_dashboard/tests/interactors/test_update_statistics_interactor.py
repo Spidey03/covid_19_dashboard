@@ -22,6 +22,7 @@ def test_update_statistics_with_invalid_total_confirmed_detail():
     total_confirmed = -1
     total_deaths = 4
     total_recovered = 3
+    user = {'is_superuser':True}
     date = datetime.date(year=2020, month=5, day=25)
     storage = create_autospec(MandalStorageInterface)
     storage.is_valid_mandal_id.return_value = None
@@ -38,6 +39,7 @@ def test_update_statistics_with_invalid_total_confirmed_detail():
     # Act
     with pytest.raises(InvalidDetailsForTotalConfirmed):
         interactor.update_statistics(
+            user=user,
             mandal_id=mandal_id, date=date, total_confirmed=total_confirmed,
             total_deaths=total_deaths, total_recovered=total_recovered
         )
@@ -49,6 +51,7 @@ def test_update_statistics_with_invalid_total_death_detail():
     total_confirmed = 10
     total_deaths = -5
     total_recovered = 3
+    user = {'is_superuser':True}
     date = datetime.date(year=2020, month=5, day=25)
     storage = create_autospec(MandalStorageInterface)
     storage.is_valid_mandal_id.return_value = None
@@ -64,6 +67,7 @@ def test_update_statistics_with_invalid_total_death_detail():
     # Act
     with pytest.raises(InvalidDetailsForTotalDeaths):
         interactor.update_statistics(
+            user=user,
             mandal_id=mandal_id, date=date, total_confirmed=total_confirmed,
             total_deaths=total_deaths, total_recovered=total_recovered
         )
@@ -75,6 +79,7 @@ def test_udpate_statistics_with_invalid_total_recovered_detail():
     total_confirmed = 10
     total_deaths = 4
     total_recovered = -3
+    user = {'is_superuser':True}
     date = datetime.date(year=2020, month=5, day=25)
     storage = create_autospec(MandalStorageInterface)
     storage.is_valid_mandal_id.return_value = None
@@ -90,6 +95,7 @@ def test_udpate_statistics_with_invalid_total_recovered_detail():
     # Act
     with pytest.raises(InvalidDetailsForTotalRecovered):
         interactor.update_statistics(
+            user=user,
             mandal_id=mandal_id, date=date, total_confirmed=total_confirmed,
             total_deaths=total_deaths, total_recovered=total_recovered
         )
@@ -101,6 +107,7 @@ def test_update_statistics_with_invalid_mandal_id():
     total_confirmed = 10
     total_deaths = 4
     total_recovered = 3
+    user = {'is_superuser':True}
     date = datetime.date(year=2020, month=5, day=25)
     storage = create_autospec(MandalStorageInterface)
     storage.is_valid_mandal_id.side_effect = InvalidMandalId
@@ -115,6 +122,7 @@ def test_update_statistics_with_invalid_mandal_id():
     # Act
     with pytest.raises(InvalidMandalId):
         interactor.update_statistics(
+            user=user,
             mandal_id=mandal_id, date=date, total_confirmed=total_confirmed,
             total_deaths=total_deaths, total_recovered=total_recovered
         )
@@ -126,6 +134,7 @@ def test_update_statistics_with_valid_details():
     total_confirmed = 10
     total_deaths = 4
     total_recovered = 3
+    user = {'is_superuser':True}
     date = datetime.date(year=2020, month=5, day=25)
     storage = create_autospec(MandalStorageInterface)
 
@@ -136,6 +145,7 @@ def test_update_statistics_with_valid_details():
     date = datetime.date(year=2020, month=5, day=25)
     # Act
     interactor.update_statistics(
+        user=user,
         mandal_id=mandal_id, date=date, total_confirmed=total_confirmed,
         total_deaths=total_deaths, total_recovered=total_recovered
         )

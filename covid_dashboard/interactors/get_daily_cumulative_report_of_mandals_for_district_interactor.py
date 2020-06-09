@@ -71,13 +71,15 @@ class GetDailyCumulativeReportOfMandalsForDistrict:
     def _get_reports_for_mandal(self, mandal_daily_reports):
         index = 0
         daily_cumulative_report_list = []
-        date = mandal_daily_reports[index]['date']
+        initial_date, final_date = self._get_initial_and_final_date()
+        # date = mandal_daily_reports[index]['date']
+        date = initial_date
         report, index = \
             self._get_next_report(mandal_daily_reports, index)
         total_cases, total_deaths, total_recovered, active_cases = \
                 0, 0, 0, 0
 
-        while report:
+        while date <= final_date:
             today_cases, today_deaths, today_recovered, today_active_cases = \
                 0, 0, 0, 0
             if date == report['date']:
@@ -109,7 +111,7 @@ class GetDailyCumulativeReportOfMandalsForDistrict:
         if index < len(mandal_daily_reports):
             report = mandal_daily_reports[index]
         else:
-            report = None
+            report = {'date':None}
         return report, index+1
 
     def _get_next_day(self, date):
@@ -122,3 +124,7 @@ class GetDailyCumulativeReportOfMandalsForDistrict:
         today_deaths= stat['total_deaths']
         today_recovered_cases = stat['total_recovered_cases']
         return today_cases, today_deaths, today_recovered_cases
+
+    def _get_initial_and_final_date(self):
+        dates = self.storage._get_initial_and_final_date()
+        return dates[0], dates[1]

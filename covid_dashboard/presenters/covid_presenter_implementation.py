@@ -186,9 +186,9 @@ class PresenterImplementation(PresenterInterface):
         response = {
             "state_name": report.state_name,
             "districts":self._get_district_report_of_a_date(districts),
-            "state_total_cases": report.total_cases,
-            "state_total_recovered_cases": report.total_recovered_cases,
-            "state_total_deaths": report.total_deaths    
+            "total_cases": report.total_cases,
+            "total_recovered_cases": report.total_recovered_cases,
+            "total_deaths": report.total_deaths    
         }
         return response
     
@@ -349,9 +349,9 @@ class PresenterImplementation(PresenterInterface):
         response = []
         for report in district_report_list:
             report_dict = {
-                "date":report.date,
+                "date":self._convert_date(report.date),
                 "total_cases":report.total_cases,
-                "total_recovered_cases":report.total_recovered,
+                "total_recovered_cases":report.total_recovered_cases,
                 "total_deaths":report.total_deaths,
                 "active_cases":report.active_cases
             }
@@ -362,3 +362,7 @@ class PresenterImplementation(PresenterInterface):
         response = self.get_response_for_daily_cumulative_report_of_mandals_for_district(
                 district_report_dict)
         return response
+
+
+    def raise_user_not_admin(self):
+        pass

@@ -58,38 +58,57 @@ class GetDistrictDailyCumulativeReport:
             list_districs_report.append(district_report)
         return list_districs_report
 
-    def _get_report_for_district(self, district_report):
-        import datetime
+    def _get_report_for_district(self, district_report_list):
+        index = 0
         daily_cumulative_report_list = []
-        first, next = 0, 1
-        date = district_report[first]['date']
-        report = district_report[first]
-        get_next = False
-        timedelta = datetime.timedelta(days=1)
+        initial_date, final_date = self._get_initial_and_final_date()
+        date = initial_date
+        report, index = self._get_next_report(district_report_list, index)
         daily_cumulative_report_list = []
-        while report:
-            total_cases, total_deaths, total_recovered, active_cases = \
+        total_cases, total_deaths, total_recovered, active_cases = \
+                0, 0, 0, 0
+        while date <= final_date:
+            today_cases, today_deaths, today_recovered, today_active_cases = \
                 0, 0, 0, 0
             if date == report['date']:
-                total_cases, total_deaths, total_recovered, active_cases = \
-                    report['total_cases'], report['total_deaths'],\
-                    report['total_recovered_cases'], report['active_cases']
-                get_next = True
-
+                today_cases, today_deaths, today_recovered = \
+                    self._get_stat_details(report)
+                today_active_cases = today_cases - \
+                    (today_deaths + today_recovered)
+                report, index = self._get_next_report(district_report_list, index)
+            total_cases += today_cases
+            total_deaths += today_deaths
+            total_recovered += today_recovered
+            active_cases += today_active_cases
             daily_cumulative_report_dto = CumulativeReportOnSpecificDay(
-                date=report['date'],
-                total_cases=report['total_cases'],
-                total_deaths=report['total_deaths'],
-                total_recovered_cases=report['total_recovered_cases'],
-                active_cases=report['active_cases']
+                date=date,
+                total_cases=total_cases,
+                total_deaths=total_deaths,
+                total_recovered_cases=total_recovered,
+                active_cases=active_cases
             )
-            if get_next:
-                if next < len(district_report):
-                    report = district_report[next]
-                    next += 1
-                else:
-                    break
-                get_next = False
-            date = date + timedelta
+            date = self._get_next_day(date)
             daily_cumulative_report_list.append(daily_cumulative_report_dto)
         return daily_cumulative_report_list
+
+    def _get_initial_and_final_date(self):
+        dates = self.storage._get_initial_and_final_date()
+        return dates[0], dates[1]
+
+    def _get_next_day(self, date):
+        import datetime
+        timedelata = datetime.timedelta(days=1)
+        return date + timedelata
+
+    def _get_next_report(self, reports, index):
+        if index < len(reports):
+            report = reports[index]
+        else:
+            report = {'date':None}
+        return report, index+1
+
+    def _get_stat_details(self, stat):
+        today_cases = stat['total_cases']
+        today_deaths= stat['total_deaths']
+        today_recovered_cases = stat['total_recovered_cases']
+        return today_cases, today_deaths, today_recovered_cases

@@ -1055,7 +1055,7 @@
                 "description": "add statistics to db with admin rights",
                 "security": [{
                     "oauth": [
-                        "superuser"
+                        "write"
                     ]
                 }],
                 "parameters": [{
@@ -1080,7 +1080,7 @@
                 "description": "update statistics to db with admin rights",
                 "security": [{
                     "oauth": [
-                        "superuser"
+                        "write"
                     ]
                 }],
                 "parameters": [{
@@ -1219,12 +1219,12 @@
 
             }
         },
-        "/statstics/v1": {
+        "/statstics/{mandal_id}/v1": {
             "get": {
                 "operationId": "get_reports_of_mandal",
                 "description": "get reports of a mandal",
                 "security": [{
-                    "oauth": ["superuser"]
+                    "oauth": ["write"]
                 }],
                 "parameters": [{
                     "$ref": "#/parameters/MandalId"
@@ -1241,7 +1241,7 @@
                 "operationId": "get_day_wise_district_details",
                 "description": "get day wise district details",
                 "security": [{
-                    "oauth": ["superuser"]
+                    "oauth": ["read"]
                 }],
                 "parameters": [{
                     "$ref": "#/parameters/DistrictId"
@@ -1253,12 +1253,12 @@
                 }
             }
         },
-        "/state/districs/{district_id}/mandals/v1": {
+        "/state/districts/{district_id}/mandals/v1": {
             "get": {
                 "operationId": "get_day_wise_mandal_details",
                 "description": "get day wise mandal details of a district",
                 "security": [{
-                    "oauth": ["superuser"]
+                    "oauth": ["read"]
                 }],
                 "parameters": [{
                     "$ref": "#/parameters/DistrictId"

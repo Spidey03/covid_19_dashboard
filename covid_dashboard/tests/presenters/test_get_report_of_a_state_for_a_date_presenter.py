@@ -29,9 +29,9 @@ def test_get_response_for_get_report_of_state_of_a_date():
                 'total_deaths': 12
             }
         ],
-        'state_total_cases': 24,
-        'state_total_recovered_cases': 4,
-        'state_total_deaths': 12
+        'total_cases': 24,
+        'total_recovered_cases': 4,
+        'total_deaths': 12
     }
     report = StateReportForADate(
         state_name='Andrapradesh',

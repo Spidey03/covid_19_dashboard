@@ -136,3 +136,7 @@ class PresenterInterface(ABC):
     @abstractmethod
     def get_response_get_day_wise_mandal_details(self, district_report_dict):
         pass
+
+    @abstractmethod
+    def raise_user_not_admin(self):
+        pass

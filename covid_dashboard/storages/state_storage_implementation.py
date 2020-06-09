@@ -5,7 +5,7 @@ from abc import ABC
 from typing import List
 from abc import abstractmethod
 from collections import defaultdict
-from django.db.models import Sum, F, Prefetch
+from django.db.models import Sum, F, Prefetch, Max, Min
 from covid_dashboard.interactors.storages.dtos import *
 from covid_dashboard.models import State, District, Mandal, Stats
 from covid_dashboard.exceptions.exceptions import *
@@ -15,13 +15,13 @@ state_id, state_name = 1, 'Andhrapradesh'
 
 class StateStorageImplementation(StateStorageInterface):
 
-    def _get_next_stat(self, stats, next):
-        if next < len(stats):
-            stat = stats[next]
+    def _get_next_stat(self, stats, index):
+        if index < len(stats):
+            stat = stats[index]
         else:
-            stat = {'district_id':None}
-        next += 1
-        return stat, next
+            stat = {'district_id':None, 'date':None}
+        index += 1
+        return stat, index
 
     def _next_day(self, date):
         import datetime
@@ -49,7 +49,7 @@ class StateStorageImplementation(StateStorageInterface):
             District.objects.values_list('id', flat=True)\
                     .filter(state_id=state_id)
             )
-    
+
         districts_cumulative_report = \
             Mandal.objects.values('district_id')\
                           .filter(stats__date__lte=till_date)\
@@ -60,7 +60,7 @@ class StateStorageImplementation(StateStorageInterface):
                               district_name=F('district__name')
                            )\
                           .filter(district_id__in=districts).order_by('district_id')
-        
+
         districts_cumulative_report_list = list(districts_cumulative_report)
 
         state_cumulative_report_dto = \
@@ -73,7 +73,7 @@ class StateStorageImplementation(StateStorageInterface):
             report_list, till_date, state_id, state_name):
         districts = District.objects.values('id','name').order_by('id')
         list_district_dtos = []
-        
+
         next = 0
         report, next = self._get_next_district_report(report_list, next)
         for district in districts:
@@ -126,7 +126,7 @@ class StateStorageImplementation(StateStorageInterface):
 	        total_recovered_cases=district_report['total_recovered'],
 	        active_cases=district_report['total_cases'] - \
 	           (
-	               district_report['total_deaths'] + 
+	               district_report['total_deaths'] +
 	               district_report['total_recovered']
 	           )
 	   )
@@ -141,22 +141,22 @@ class StateStorageImplementation(StateStorageInterface):
                          total_recovered=Sum('total_recovered'))\
                      .filter(mandal__district__state_id=state_id)\
                      .order_by('date')
-    
+
         daily_cumulative_report_dto = \
             self._convert_to_daily_cumulative_report_dto(stats)
         return daily_cumulative_report_dto
 
     def _convert_to_daily_cumulative_report_dto(self, stats):
         specific_day_report = []
-        first, next = 0, 0
-        date = stats[first]['date']
+        index = 0
+        initial_date, final_date = self._get_initial_and_final_date()
+        date = initial_date
         get_next = True
         total_cases, total_deaths, total_recovered, active_cases = \
             0,0,0,0
-        while next < len(stats):
-            if get_next:
-                stat, next = self._get_next_stat(stats, next)
-                get_next = False
+        while date <= final_date:
+            if index < len(stats):
+                stat, index = self._get_next_stat(stats, index)
             if date == stat['date']:
                 get_next = True
                 total_cases += stat['total_confirmed']
@@ -206,7 +206,7 @@ class StateStorageImplementation(StateStorageInterface):
             "reports":reports
         }
         return district_daily_cumulative_report_dict
-    
+
     def _convert_to_district_details(self, districts):
         district_details = {}
         for district in districts:
@@ -230,7 +230,7 @@ class StateStorageImplementation(StateStorageInterface):
     def _add_district_enties(self, stat, districts):
         previous_report = self._get_previous_report(districts, stat['district_id'])
         return self._add_entries(stat, districts, previous_report)
-    
+
     def _get_previous_report(self, reports, district_id):
         end = -1
         previous_cumulative_data = reports[district_id][end]
@@ -323,28 +323,40 @@ class StateStorageImplementation(StateStorageInterface):
 
 
     def get_state_wise_daily_cases_report(self) -> StateDailyReport:
-        stats = Mandal.objects.values('district__state_id', 'stats__date').annotate(
-            total_cases=Sum('stats__total_confirmed'),
-            total_recovered_cases=Sum('stats__total_recovered'),
-            total_deaths=Sum('stats__total_deaths'),
-            date=F('stats__date')
-            ).order_by('date').exclude(date=None)
+        # stats = Stats.objects.values('mandal__district__state_id', 'date')\
+        #              .annotate(
+        #                     total_cases=Sum('total_confirmed'),
+        #                     total_recovered_cases=Sum('total_recovered'),
+        #                     total_deaths=Sum('total_deaths')
+        #                  )\
+        #              .order_by('date').exclude(date=None)
+        stats = Mandal.objects.values('district__state_id', 'stats__date')\
+                      .annotate(
+                            total_cases=Sum('stats__total_confirmed'),
+                            total_recovered_cases=Sum('stats__total_recovered'),
+                            total_deaths=Sum('stats__total_deaths'),
+                            date=F('stats__date')
+                            )\
+                      .order_by('date').exclude(date=None)
+        #Stats.objects.aggregate(initial_date=Min('date'),
+                # final_date=Max('date'))
+
         state_report = self._convert_to_daily_cases_report(stats)
         return state_report
 
     def _convert_to_daily_cases_report(self, stats):
         index = 0
-        date = stats[index]['date']
         stat, index = self._get_next_stat(stats, index)
+        initial_date, final_date = self._get_initial_and_final_date()
+        date = initial_date
         reports = []
-        while stat:
+        while date <= final_date:
             total_cases, total_deaths, total_recovered_cases = 0, 0, 0
             if date == stat['date']:
                 total_cases, total_deaths, total_recovered_cases = \
                     self._get_stat_details(stat)
-                if index >= len(stats):
-                    break
-                stat, index = self._get_next_stat(stats, index)
+                if index < len(stats):
+                    stat, index = self._get_next_stat(stats, index)
 
             reports.append(
                 Report(
@@ -358,3 +370,9 @@ class StateStorageImplementation(StateStorageInterface):
             )
             date = self._next_day(date)
         return reports
+
+
+    def _get_initial_and_final_date(self):
+        dates = Stats.objects.aggregate(initial_date=Min('date'),
+            final_date=Max('date'))
+        return dates['initial_date'], dates['final_date']

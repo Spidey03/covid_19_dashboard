@@ -3,7 +3,7 @@
 APP_NAME = "covid_dashboard"
 OPERATION_NAME = "get_reports_of_mandal"
 REQUEST_METHOD = "get"
-URL_SUFFIX = "statstics/v1/"
+URL_SUFFIX = "statstics/{mandal_id}/v1/"
 
 from .test_case_01 import TestCase01GetReportsOfMandalAPITestCase
 

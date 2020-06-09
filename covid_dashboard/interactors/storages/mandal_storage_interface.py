@@ -10,6 +10,10 @@ from covid_dashboard.exceptions.exceptions\
 
 
 class MandalStorageInterface(ABC):
+    
+    @abstractmethod
+    def is_user_admin(self, user):
+        pass
 
     @abstractmethod
     def is_valid_total_confirmed(self, total_confirmed: int):

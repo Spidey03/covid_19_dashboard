@@ -47,6 +47,13 @@ def test_get_state_wise_daily_report_storage(
             total_recovered_cases=4,
             total_deaths=19,
             active_cases=6
+        ),
+        Report(
+            date=datetime.date(2020, 5, 25),
+            total_cases=30,
+            total_recovered_cases=10,
+            total_deaths=5,
+            active_cases=15
         )
     ]
     # Act
@@ -117,6 +124,13 @@ def test_get_state_wise_daily_report_storage_when_no_cases_on_a_day(
             total_cases=0,
             total_recovered_cases=0,
             total_deaths=0,
+            active_cases=0
+        ),
+        Report(
+            date=datetime.date(2020, 5, 30),
+            total_cases=17,
+            total_recovered_cases=2,
+            total_deaths=15,
             active_cases=0
         )
     ]

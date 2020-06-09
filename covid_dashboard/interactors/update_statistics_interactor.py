@@ -7,7 +7,7 @@ from covid_dashboard.exceptions.exceptions\
             InvalidDetailsForTotalDeaths,
             InvalidDetailsForTotalRecovered,
             InvalidMandalId, InvalidStatsDetails,
-            StatNotFound
+            StatNotFound, UserNotAdmin
            )
 
 
@@ -20,7 +20,7 @@ class UpdateStatistics:
         self.presenter = presenter
 
 
-    def update_statistics(self, mandal_id: int,
+    def update_statistics(self, mandal_id: int, user, 
             date, total_confirmed: int, total_deaths: int, total_recovered: int):
         try:
             self.storage.is_valid_mandal_id(mandal_id)
@@ -38,7 +38,10 @@ class UpdateStatistics:
             self.storage.is_valid_total_recovered(total_recovered)
         except InvalidDetailsForTotalRecovered:
             self.presenter.raise_invalid_details_for_total_recovered()
-
+        try:
+            self.storage.is_user_admin(user)
+        except UserNotAdmin:
+            self.presenter.raise_user_not_admin()
         # try:
         #     self.storage.is_statistics_valid(total_confirmed, total_deaths, total_recovered)
         # except InvalidStatsDetails:

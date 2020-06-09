@@ -22,9 +22,10 @@ def api_wrapper(*args, **kwargs):
     presenter = PresenterImplementation()
     interactor = GetDayWiseDistrictDetails(
         storage=storage, presenter=presenter)
-    
+
     request_data = kwargs['request_data']
     district_id = kwargs['district_id']
+    print(district_id)
     try:
         response = interactor.get_day_wise_district_details(
             district_id=district_id)

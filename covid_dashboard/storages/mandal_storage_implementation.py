@@ -5,7 +5,7 @@ from typing import List
 from collections import defaultdict
 from django.db.models import Sum, F, Prefetch
 from covid_dashboard.models\
-    import State, District, Mandal, Stats
+    import State, District, Mandal, Stats, User
 from covid_dashboard.interactors.storages.mandal_storage_interface\
     import MandalStorageInterface
 from covid_dashboard.interactors.storages.dtos\
@@ -22,10 +22,14 @@ from covid_dashboard.exceptions.exceptions\
             InvalidDetailsForTotalDeaths,
             InvalidDetailsForTotalRecovered,
             InvalidMandalId, InvalidStatsDetails, StatNotFound,
-            DetailsAlreadyExist, InvalidDate)
+            DetailsAlreadyExist, InvalidDate, UserNotAdmin)
 
 
 class MandalStorageImplementation(MandalStorageInterface):
+
+    def is_user_admin(self, user):
+        if not user.is_superuser:
+            raise UserNotAdmin
 
     def is_valid_total_confirmed(self, total_confirmed: int):
         is_valid = self._check_valid(total_confirmed)

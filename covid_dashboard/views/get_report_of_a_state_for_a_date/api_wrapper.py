@@ -24,7 +24,6 @@ def api_wrapper(*args, **kwargs):
         storage=storage, presenter=presenter)
 
     request_data = kwargs['request_data']
-    district_id = kwargs['district_id']
     query = kwargs['request_query_params']
     date = query['date']
     try:

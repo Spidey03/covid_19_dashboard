@@ -1,6 +1,7 @@
 from raven.utils import json
 from django.http import HttpResponse
-from django_swagger_utils.drf_server.exceptions import BadRequest, NotFound
+from django_swagger_utils.drf_server.exceptions import BadRequest, NotFound,\
+    Forbidden
 from django_swagger_utils.drf_server.utils.decorator.interface_decorator \
     import validate_decorator
 from .validator_class import ValidatorClass
@@ -15,17 +16,20 @@ from covid_dashboard.exceptions.exceptions\
     import (InvalidDetailsForTotalConfirmed,
             InvalidDetailsForTotalDeaths,
             InvalidDetailsForTotalRecovered,
-            InvalidMandalId, InvalidStatsDetails, StatNotFound
+            InvalidMandalId, InvalidStatsDetails, StatNotFound,
+            UserNotAdmin
            )
 from covid_dashboard.constants.exception_messages\
     import (INVALID_TOTAL_CONFIRMED, INVALID_TOTAL_DEATHS,
-            INVALID_TOTAL_RECOVERED, DETAILS_NOT_FOUND, INVALID_MANDAL_ID)
+            INVALID_TOTAL_RECOVERED, DETAILS_NOT_FOUND, INVALID_MANDAL_ID,
+            USER_NOT_ADMIN)
 
 
 @validate_decorator(validator_class=ValidatorClass)
 def api_wrapper(*args, **kwargs):
     # ---------MOCK IMPLEMENTATION---------
 
+    user = kwargs['user']
     request_data = kwargs['request_data']
     mandal_id = request_data['mandal_id']
     date = request_data['date']
@@ -39,6 +43,7 @@ def api_wrapper(*args, **kwargs):
     interactor = UpdateStatistics(storage=storage, presenter=presenter)
     try:
         interactor.update_statistics(mandal_id=mandal_id,
+            user=user,
             date=date, total_confirmed=total_confirmed,
             total_deaths=total_deaths,
             total_recovered=total_recovered)
@@ -52,6 +57,8 @@ def api_wrapper(*args, **kwargs):
         raise BadRequest(*INVALID_TOTAL_RECOVERED)
     except StatNotFound:
         raise BadRequest(*DETAILS_NOT_FOUND)
+    except UserNotAdmin:
+        raise Forbidden(*USER_NOT_ADMIN)
     return HttpResponse(status=200)
 
     # try:

@@ -40,19 +40,19 @@ def test_get_statistics_presenter():
         'mandal_name': 'Kallur',
         'reports': [
             {
-                'date': datetime.date(2020, 5, 22),
+                'date': str(datetime.date(2020, 5, 22).strftime('%d-%b-%Y')),
                 'total_cases': 5,
                 'total_deaths': 1,
                 'total_recovered_cases': 2
             },
             {
-                'date': datetime.date(2020, 5, 23),
+                'date': str(datetime.date(2020, 5, 23).strftime('%d-%b-%Y')),
                 'total_cases': 6,
                 'total_deaths': 1,
                 'total_recovered_cases': 2
             },
             {
-                'date': datetime.date(2020, 5, 24),
+                'date': str(datetime.date(2020, 5, 24).strftime('%d-%b-%Y')),
                 'total_cases': 5,
                 'total_deaths': 4,
                 'total_recovered_cases': 2

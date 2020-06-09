@@ -45,28 +45,28 @@ def test_get_daily_cumulative_report_for_district():
     expected_response ={
         'daily_cumulative':[
             {
-                'date': datetime.date(2020, 5, 22),
+                'date': str(datetime.date(2020, 5, 22).strftime('%d-%b-%Y')),
                 'total_cases': 6,
                 'total_deaths': 3,
                 'total_recovered_cases': 5,
                 'active_cases': -2
             },
             {
-                'date': datetime.date(2020, 5, 23),
+                'date': str(datetime.date(2020, 5, 23).strftime('%d-%b-%Y')),
                 'total_cases': 28,
                 'total_deaths': 8,
                 'total_recovered_cases': 13,
                 'active_cases': 7
             },
             {
-                'date': datetime.date(2020, 5, 24),
+                'date': str(datetime.date(2020, 5, 24).strftime('%d-%b-%Y')),
                 'total_cases': 57,
                 'total_deaths': 27,
                 'total_recovered_cases': 17,
                 'active_cases': 13
             },
             {
-                'date': datetime.date(2020, 5, 25),
+                'date': str(datetime.date(2020, 5, 25).strftime('%d-%b-%Y')),
                 'total_cases': 87,
                 'total_deaths': 32,
                 'total_recovered_cases': 27,

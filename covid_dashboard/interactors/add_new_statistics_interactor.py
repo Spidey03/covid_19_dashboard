@@ -6,7 +6,7 @@ from covid_dashboard.exceptions.exceptions import \
     (InvalidMandalId, InvalidDetailsForTotalDeaths,
      DetailsAlreadyExist, InvalidStatsDetails,
      InvalidDetailsForTotalRecovered,
-     InvalidDetailsForTotalConfirmed)
+     InvalidDetailsForTotalConfirmed, UserNotAdmin)
 
 
 class AddNewStatistics:
@@ -18,8 +18,13 @@ class AddNewStatistics:
         self.presenter = presenter
 
 
-    def add_new_statistics(self, mandal_id: int,
+    def add_new_statistics(self, mandal_id: int, user,
             date, total_confirmed: int, total_deaths: int, total_recovered: int):
+        
+        try:
+            self.storage.is_valid_mandal_id(mandal_id)
+        except InvalidMandalId:
+            self.presenter.raise_invalid_details_for_mandal_id()
 
         try:
             self.storage.is_valid_mandal_id(mandal_id)
@@ -45,6 +50,11 @@ class AddNewStatistics:
             self.storage.is_already_exist(mandal_id=mandal_id, date=date)
         except DetailsAlreadyExist:
             self.presenter.raise_details_already_exist()
+
+        try:
+            self.storage.is_user_admin(user)
+        except UserNotAdmin:
+            self.presenter.raise_user_not_admin()
 
         self.storage.add_new_statistics(mandal_id, total_confirmed,
             date, total_deaths, total_recovered

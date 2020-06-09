@@ -1,8 +1,5 @@
 from raven.utils import json
 from django.http import HttpResponse
-from django_swagger_utils.drf_server.exceptions import BadRequest, NotFound
-from django_swagger_utils.drf_server.utils.decorator.interface_decorator \
-    import validate_decorator
 from .validator_class import ValidatorClass
 from covid_dashboard.interactors.get_statistics_interactor\
     import GetStatistics
@@ -10,29 +7,36 @@ from covid_dashboard.storages.mandal_storage_implementation\
     import MandalStorageImplementation
 from covid_dashboard.presenters.covid_presenter_implementation\
     import PresenterImplementation
+from django_swagger_utils.drf_server.exceptions import BadRequest, NotFound,\
+    Forbidden
+from django_swagger_utils.drf_server.utils.decorator.interface_decorator \
+    import validate_decorator
 from common.oauth2_storage import OAuth2SQLStorage
 from covid_dashboard.exceptions.exceptions\
     import (InvalidDetailsForTotalConfirmed,
             InvalidDetailsForTotalDeaths,
             InvalidDetailsForTotalRecovered,
-            InvalidMandalId, InvalidStatsDetails, StatNotFound
+            InvalidMandalId, InvalidStatsDetails, StatNotFound, UserNotAdmin
            )
-from covid_dashboard.constants.exception_messages import (INVALID_MANDAL_ID)
+from covid_dashboard.constants.exception_messages import (INVALID_MANDAL_ID,
+    USER_NOT_ADMIN)
 
 
 @validate_decorator(validator_class=ValidatorClass)
 def api_wrapper(*args, **kwargs):
     # ---------MOCK IMPLEMENTATION---------
 
-    request_data = kwargs['request_data']
-    mandal_id = request_data['mandal_id']
-    
+    mandal_id = kwargs['mandal_id']
+    user = kwargs['user']
     storage = MandalStorageImplementation()
     presenter = PresenterImplementation()
     
     interactor = GetStatistics(storage=storage, presenter=presenter)
     try:
-        response = interactor.get_statistics(mandal_id=mandal_id)
+        response = interactor.get_statistics(mandal_id=mandal_id,
+            user=user)
+    except UserNotAdmin:
+        raise Forbidden(*USER_NOT_ADMIN)
     except InvalidMandalId:
         raise NotFound(*INVALID_MANDAL_ID)
     data = json.dumps(response)

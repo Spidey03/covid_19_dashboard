@@ -36,7 +36,7 @@ def api_wrapper(*args, **kwargs):
     except InvalidDistrictId:
         raise NotFound(*INVALID_DISTRICT_ID)
     except InvalidDate:
-        raise BadRequest(*INVALID_DATE)
+        raise NotFound(*INVALID_DATE)
     data = json.dumps(response)
     return HttpResponse(data, status=200)
     # try:

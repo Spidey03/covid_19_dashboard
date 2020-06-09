@@ -3,7 +3,7 @@ from abc import ABC
 from typing import List
 from abc import abstractmethod
 from collections import defaultdict
-from django.db.models import Sum, F, Prefetch
+from django.db.models import Sum, F, Prefetch, Min, Max
 from covid_dashboard.exceptions.exceptions import *
 from covid_dashboard.interactors.storages.dtos import *
 from covid_dashboard.models import State, District, Mandal, Stats
@@ -29,18 +29,17 @@ class DistrictStorageImplementation(DistrictStorageInterface):
         timedelata = datetime.timedelta(days=1)
         return date + timedelata
 
-    def _get_initial_and_final_dates(self, stats):
-        initial, final = 0, len(stats)-1
-        initial_date = stats[initial]['date']
-        final_date = stats[final]['date']
-        return initial_date, final_date
+    def _get_initial_and_final_date(self):
+        dates = Stats.objects.aggregate(initial_date=Min('date'),
+            final_date=Max('date'))
+        return dates['initial_date'], dates['final_date']
 
     # return stat with None if stat doesnotexist
     def _get_next_stat(self, stats, index):
         if index < len(stats):
             stat = stats[index]
         else:
-            stat = {'district_id':None, 'mandal_id':None}
+            stat = {'district_id':None, 'mandal_id':None, 'date':None}
         index += 1
         return stat, index
 
@@ -80,7 +79,7 @@ class DistrictStorageImplementation(DistrictStorageInterface):
         today_recovered_cases = stat['total_recovered_cases']
         return today_cases, today_deaths, today_recovered_cases
 
-    def get_district_cumulative_report(self, till_date, district_id):
+    def get_district_cumulative_report(self, till_date, district_id: int):
         district = District.objects.get(id=district_id)
         stats = Stats.objects.values('mandal_id').annotate(
                     mandal_name=F('mandal__name'),
@@ -147,7 +146,7 @@ class DistrictStorageImplementation(DistrictStorageInterface):
             )
 
 
-    def get_daily_cumulative_report_for_district(self, district_id):
+    def get_daily_cumulative_report_for_district(self, district_id: int):
         stats = Stats.objects.values('date')\
                      .filter(mandal__district_id=district_id)\
                      .annotate(
@@ -163,8 +162,8 @@ class DistrictStorageImplementation(DistrictStorageInterface):
     def _convert_to_daily_cumulative_report_dto_for_district(self, stats):
         index = 0
         stat, index = self._get_next_stat(stats, index)
-        date, final_date = self._get_initial_and_final_dates(stats)
-        get_next = False
+        initial_date, final_date = self._get_initial_and_final_date()
+        date = initial_date
         cumulative_reports = []
         total_cases, total_deaths, total_recovered_cases, active_cases = \
             0, 0, 0, 0
@@ -174,7 +173,8 @@ class DistrictStorageImplementation(DistrictStorageInterface):
             if date == stat['date']:
                 today_cases, today_deaths, today_recovered_cases = \
                     self._get_stat_details(stat)
-                get_next = True
+                if index < len(stats):
+                    stat, index = self._get_next_stat(stats, index)
 
             today_active_cases = today_cases - \
                 (today_deaths + today_recovered_cases)
@@ -191,12 +191,6 @@ class DistrictStorageImplementation(DistrictStorageInterface):
                     active_cases=active_cases
                 )
             )
-            if get_next:
-                if index < len(stats):
-                    stat, next = self._get_next_stat(stats, index)
-                else:
-                    break
-                get_next = False
             date = self._next_day(date)
         return cumulative_reports
 
@@ -211,7 +205,6 @@ class DistrictStorageImplementation(DistrictStorageInterface):
                         total_deaths=Sum('total_deaths')
                     ).filter(mandal__district_id=district_id)\
                      .order_by('mandal_id', 'date')
-
 
         mandals = list(Mandal.objects.filter(district_id=district_id))
         mandal_details = self._convert_to_mandal_details(mandals)
@@ -293,9 +286,9 @@ class DistrictStorageImplementation(DistrictStorageInterface):
         index = 0
         reports = []
         total_cases, total_deaths, total_recovered_cases = 0, 0, 0
-        if not stats:
-            return reports, total_cases, total_deaths,\
-                total_recovered_cases
+        # if not stats:
+        #     return reports, total_cases, total_deaths,\
+        #         total_recovered_cases
         stat, index = self._get_next_stat_for_mandal(stats, index)
         print(mandals)
         for mandal in mandals:
@@ -340,14 +333,16 @@ class DistrictStorageImplementation(DistrictStorageInterface):
         district_reports_list = []
         if not stats:
             return district_reports_list
-        date = stats[index]['date']
+        initial_date, final_date = self._get_initial_and_final_date()
         stat, index = self._get_next_stat(stats, index)
-        while index<len(stats):
+        date = initial_date
+        while date <= final_date:
             total_cases, total_deaths, total_recovered = 0, 0, 0
             if date == stat['date']:
                 total_cases, total_deaths, total_recovered = \
                     self._get_stat_details(stat)
-                stat, index = self._get_next_stat(stats, index)
+                if index < len(stats):
+                    stat, index = self._get_next_stat(stats, index)
             district_reports_list.append(
                 Report(
                     date=date,
@@ -381,7 +376,6 @@ class DistrictStorageImplementation(DistrictStorageInterface):
             "reports":mandal_reports
         }
         return mandal_wise_daily_cumulative_report_dict
-
 
     def _convert_to_list_mandal_day_wise_report(self, stats):
         mandals_dict = defaultdict(list)

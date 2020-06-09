@@ -10,6 +10,8 @@ from covid_dashboard.storages.district_storage_implementation\
     import DistrictStorageImplementation
 from covid_dashboard.presenters.covid_presenter_implementation\
     import PresenterImplementation
+from covid_dashboard.exceptions.exceptions import InvalidDistrictId
+from covid_dashboard.constants.exception_messages import INVALID_DISTRICT_ID
 
 
 @validate_decorator(validator_class=ValidatorClass)
@@ -23,8 +25,11 @@ def api_wrapper(*args, **kwargs):
     
     request_data = kwargs['request_data']
     district_id = kwargs['district_id']
-    response = interactor.get_daily_cumulative_report_of_mandals_for_district(
-        district_id=district_id)
+    try:
+        response = interactor.get_daily_cumulative_report_of_mandals_for_district(
+            district_id=district_id)
+    except InvalidDistrictId:
+        raise NotFound(*INVALID_DISTRICT_ID)
 
     data = json.dumps(response)
     response = HttpResponse(data, status=200)

@@ -19,13 +19,13 @@ def test_get_statistics_for_mandal_invalid_mandal_id():
     mandal_id = 10
     report = None
     result = None
-    
+    user = {'is_superuser':True}
     storage.is_valid_mandal_id.side_effect = InvalidMandalId
     presenter.raise_invalid_details_for_mandal_id.side_effect = InvalidMandalId
 
     # Act
     with pytest.raises(InvalidMandalId):
-        interactor.get_statistics(mandal_id=mandal_id)
+        interactor.get_statistics(mandal_id=mandal_id, user=user)
 
 
 def test_get_statistics_for_mandal():
@@ -35,6 +35,7 @@ def test_get_statistics_for_mandal():
     presenter = create_autospec(PresenterInterface)
     interactor = GetStatistics(storage=storage, presenter=presenter)
     mandal_id = 10
+    user = {'is_superuser':True}
     report = MandalStatistics(
             mandal_id=1,
             mandal_name='Kallur',
@@ -76,7 +77,7 @@ def test_get_statistics_for_mandal():
     presenter.get_response_for_get_statistics.return_value = expected_result
 
     # Act
-    result = interactor.get_statistics(mandal_id=mandal_id)
+    result = interactor.get_statistics(mandal_id=mandal_id, user=user)
 
     # Assert
     assert result == expected_result
