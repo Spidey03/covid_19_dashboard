@@ -6,7 +6,7 @@ from covid_dashboard.interactors.storages.district_storage_interface\
 from covid_dashboard.interactors.presenters.presenter_interface\
     import PresenterInterface
 from covid_dashboard.interactors.\
-    get_daily_cumulative_report_of_mandals_for_district_interactor\
+    district_get_daily_cumulative_report_of_mandals_interactor\
         import GetDailyCumulativeReportOfMandalsForDistrict
 from covid_dashboard.tests.interactors.conftest import *
 from covid_dashboard.interactors.storages.dtos\

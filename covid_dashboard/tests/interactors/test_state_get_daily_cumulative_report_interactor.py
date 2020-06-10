@@ -4,7 +4,7 @@ from covid_dashboard.interactors.storages.state_storage_interface\
     import StateStorageInterface
 from covid_dashboard.interactors.presenters.presenter_interface\
     import PresenterInterface
-from covid_dashboard.interactors.get_daily_cumulative_report_interactor\
+from covid_dashboard.interactors.state_get_daily_cumulative_report_interactor\
     import GetDailyCumulativeReport
 from covid_dashboard.tests.interactors.conftest import *
 
