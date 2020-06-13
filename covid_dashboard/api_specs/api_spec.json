@@ -1,212 +1,445 @@
 {
-        "swagger": "2.0",
-        "host": "127.0.0.1:8000",
-        "basePath": "/api/covid_dashboard/",
-        "info": {
-            "version": "1.0.0",
-            "title": "Simple API",
-            "description": "A simple API to learn how to write OpenAPI Specification"
-        },
-        "schemes": [
-            "http"
-        ],
-        "consumes": [
-            "application/json"
-        ],
-        "produces": [
-            "application/json"
-        ],
-        "securityDefinitions": {
-            "oauth": {
-                "tokenUrl": "http://auth.ibtspl.com/oauth2/",
-                "flow": "password",
-                "scopes": {
-                    "read": "read users",
-                    "write": "create users",
-                    "update": "update users",
-                    "delete": "delete users"
+    "swagger": "2.0",
+    "host": "127.0.0.1:8000",
+    "basePath": "/api/covid_dashboard/",
+    "info": {
+        "version": "1.0.0",
+        "title": "Simple API",
+        "description": "A simple API to learn how to write OpenAPI Specification"
+    },
+    "schemes": [
+        "http"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "securityDefinitions": {
+        "oauth": {
+            "tokenUrl": "http://auth.ibtspl.com/oauth2/",
+            "flow": "password",
+            "scopes": {
+                "read": "read users",
+                "write": "create users",
+                "update": "update users",
+                "delete": "delete users"
+            },
+            "type": "oauth2"
+        }
+    },
+    "security": [],
+    "definitions": {
+        "User": {
+            "type": "object",
+            "properties": {
+                "username": {
+                    "type": "string"
                 },
-                "type": "oauth2"
-            }
-        },
-        "security": [],
-        "definitions": {
-            "TodoId": {
-                "type": "object",
-                "properties": {
-                    "id": {
-                        "type": "integer"
-                    }
+                "password": {
+                    "type": "string"
                 }
             },
-            "BasicTodo": {
-                "type": "object",
-                "properties": {
-                    "description": {
-                        "type": "string"
-                    },
-                    "is_completed": {
-                        "type": "boolean"
-                    },
-                    "remind_at": {
-                        "type": "string"
-                    }
-                },
-                "required": [
-                    "description"
-                ]
-            },
-            "Todo": {
-                "allOf": [
-                    {
-                        "$ref": "#/definitions/BasicTodo"
-                    },
-                    {
-                        "$ref": "#/definitions/TodoId"
-                    }
-                ]
-            }
+            "required": [
+                "username",
+                "password"
+            ]
         },
-        "parameters": {
-            "TodoId": {
-                "description": "todo id",
-                "in": "path",
-                "name": "id",
-                "required": true,
-                "type": "integer"
+        "LogInSuccessful": {
+            "type": "object",
+            "properties": {
+                "user_id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "access_token": {
+                    "type": "string"
+                },
+                "refresh_token": {
+                    "type": "string"
+                },
+                "expires_in": {
+                    "type": "string",
+                    "format": "datetime"
+                }
             },
-            "BasicTodo": {
-                "description": "Todo Parameter",
-                "in": "body",
-                "name": "todo",
-                "required": true,
-                "schema": {
-                    "$ref": "#/definitions/BasicTodo"
+            "required": [
+                "user_id",
+                "access_token",
+                "refresh_token",
+                "expires_in"
+            ]
+        },
+        "LogInFailed": {
+            "type": "object",
+            "properties": {
+                "response": {
+                    "type": "string",
+                    "enum": [
+                        "invalid username",
+                        "invalid password"
+                    ]
                 }
             }
         },
-        "responses": {
-            "SuccessResponse": {
-                "description": "success response"
-            }
+        "ActiveCases": {
+            "type": "object",
+            "properties": {
+                "active_cases": {
+                    "type": "integer",
+                    "format": "int64"
+                }
+            },
+            "required": ["active_cases"]
         },
-        "paths": {
-            "/todos/": {
-                "get": {
-                    "summary": "Get all todos",
-                    "description": "Returns a list containing all todos.",
-                    "operationId": "get_todos",
-                    "security": [
-                        {
-                            "oauth": [
-                                "read"
-                            ]
-                        }
-                    ],
-                    "responses": {
-                        "200": {
-                            "description": "A list of todos",
-                            "schema": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/definitions/Todo"
-                                }
-                            }
-                        }
-                    }
+        "TotalCases": {
+            "type": "object",
+            "properties": {
+                "total_cases": {
+                    "type": "integer",
+                    "format": "int64"
                 },
-                "post": {
-                    "summary": "create a todo",
-                    "description": "Create a todo",
-                    "operationId": "create_todo",
-                    "security": [
-                        {
-                            "oauth": [
-                                "write"
-                            ]
+                "total_deaths": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "total_recovered_cases": {
+                    "type": "integer",
+                    "format": "int64"
+                }
+            },
+            "required": [
+                "total_cases",
+                "total_deaths",
+                "total_recovered_cases"
+            ]
+        },
+        "MetricsResult": {
+            "allOf": [{
+                    "$ref": "#/definitions/TotalCases"
+                },
+                {
+                    "$ref": "#/definitions/ActiveCases"
+                }
+
+            ]
+        },
+        "DistrictReportforState": {
+            "allOf": [{
+                    "type": "object",
+                    "properties": {
+                        "district_id": {
+                            "type": "integer",
+                            "format": "int64"
+                        },
+                        "district_name": {
+                            "type": "string"
                         }
-                    ],
-                    "parameters": [
-                        {
-                            "$ref": "#/parameters/BasicTodo"
-                        }
-                    ],
-                    "responses": {
-                        "200": {
-                            "description": "create a todo",
-                            "schema": {
-                                "$ref": "#/definitions/TodoId"
+                    },
+                    "required": ["district_id", "district_name"]
+                },
+                {
+                    "$ref": "#/definitions/MetricsResult"
+                }
+            ]
+        },
+        "StateCumulative": {
+            "allOf": [{
+                    "type": "object",
+                    "properties": {
+                        "state_name": {
+                            "type": "string"
+                        },
+                        "districts": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/DistrictReportforState"
                             }
                         }
+                    },
+                    "required": [
+                        "state_name",
+                        "districts"
+                    ]
+                },
+                {
+                    "$ref": "#/definitions/MetricsResult"
+                }
+            ]
+        },
+        "StateDayWiseReport": {
+            "type": "object",
+            "properties": {
+                "daily_cumulative ": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "date": {
+                                "type": "string",
+                                "format": "date"
+                            },
+                            "total_cases": {
+                                "type": "integer",
+                                "format": "int64"
+                            },
+                            "total_deaths": {
+                                "type": "integer",
+                                "format": "int64"
+                            },
+                            "total_recovered_cases": {
+                                "type": "integer",
+                                "format": "int64"
+                            },
+                            "active_cases": {
+                                "type": "integer",
+                                "format": "int64"
+                            }
+                        },
+                        "required": [
+                            "date",
+                            "total_cases",
+                            "total_deaths",
+                            "total_recovered_cases",
+                            "active_cases"
+                        ]
                     }
                 }
             },
-            "/todos/{id}/": {
-                "parameters": [
-                    {
-                        "$ref": "#/parameters/TodoId"
-                    }
-                ],
-                "get": {
-                    "summary": "Get a todo",
-                    "description": "Returns a todo.",
-                    "operationId": "get_todo",
-                    "security": [
-                        {
-                            "oauth": [
-                                "read"
-                            ]
-                        }
-                    ],
-                    "responses": {
-                        "200": {
-                            "description": "A todo",
-                            "schema": {
-                                "$ref": "#/definitions/Todo"
+            "required": ["daily_cumulative"]
+        },
+        "StateDayWiseReportWithDistricts": {
+            "type": "object",
+            "properties": {
+                "state_name": {
+                    "type": "string"
+                },
+                "districts": {
+                    "type": "object",
+                    "properties": {
+                        "district_id": {
+                            "type": "integer"
+                        },
+                        "district_name": {
+                            "type": "string"
+                        },
+                        "daily_cumulative ": {
+                            "type": "array",
+                            "items": {
+                                "type": "object",
+                                "properties": {
+                                    "date": {
+                                        "type": "string",
+                                        "format": "date"
+                                    },
+                                    "total_cases": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    },
+                                    "total_deaths": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    },
+                                    "total_recovered_cases": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    },
+                                    "active_cases": {
+                                        "type": "integer",
+                                        "format": "int64"
+                                    }
+                                },
+                                "required": [
+                                    "date",
+                                    "total_cases",
+                                    "total_deaths",
+                                    "total_recovered_cases",
+                                    "active_cases"
+                                ]
                             }
                         }
+                    },
+                    "required": ["district_id", "district_name", "daily_cumulative"]
+                }
+
+            },
+            "required": [
+                "state_name",
+                "districts"
+            ]
+        }
+    },
+    "parameters": {
+        "StateIdParameter": {
+            "name": "state_id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+        },
+        "DistrictIdParameter": {
+            "name": "district_id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+        },
+        "MandalIdParameter": {
+            "name": "mandal_id",
+            "in": "path",
+            "required": true,
+            "type": "integer"
+        },
+        "DateParameter": {
+            "name": "date",
+            "in": "query",
+            "required": true,
+            "type": "string",
+            "format": "date"
+        },
+        "TillDateParameter": {
+            "name": "till_date",
+            "in": "query",
+            "required": true,
+            "type": "string",
+            "format": "date"
+        },
+        "LogInParameter": {
+            "name": "login",
+            "description": "user login",
+            "in": "body",
+            "schema": {
+                "$ref": "#/definitions/User"
+            }
+        }
+
+    },
+    "responses": {
+        "LoginSuccessfulResponse": {
+            "description": "Log in successfully",
+            "schema": {
+                "$ref": "#/definitions/LogInSuccessful"
+            }
+        },
+        "LoginFailedResponse": {
+            "description": "Log in failed",
+            "schema": {
+                "$ref": "#/definitions/LogInFailed"
+            }
+        },
+        "StateCumulativeResponse": {
+            "description": "state cumulative response",
+            "schema": {
+                "$ref": "#/definitions/StateCumulative"
+            }
+        },
+        "StateDayWiseResponse": {
+            "description": "state daily cumulative response",
+            "schema": {
+                "$ref": "#/definitions/StateDayWiseReport"
+            }
+        },
+        "StateDayWiseResponseDistricts": {
+            "description": "state daily cumulative with districts response",
+            "schema": {
+                "$ref": "#/definitions/StateDayWiseReportWithDistricts"
+            }
+        },
+        "StateDayReportResponse": {
+            "description": "state day report response",
+            "schema": {
+                "$ref": "#/definitions/StateDayWiseReport"
+            }
+        },
+    },
+    "paths": {
+        "/login/v1": {
+            "post": {
+                "operationId": "log_in",
+                "description": "user log in api",
+                "parameters": [{
+                    "$ref": "#/parameters/LogInParameter"
+                }],
+                "responses": {
+                    "200": {
+                        "$ref": "#/responses/LoginSuccessfulResponse"
+                    },
+                    "400": {
+                        "$ref": "#/responses/LoginFailedResponse"
                     }
-                },
-                "put": {
-                    "parameters": [
-                        {
-                            "$ref": "#/parameters/BasicTodo"
-                        }
-                    ],
-                    "summary": "Updates a todo",
-                    "description": "Updates a todo.",
-                    "operationId": "update_todo",
-                    "security": [
-                        {
-                            "oauth": [
-                                "update"
-                            ]
-                        }
-                    ],
-                    "responses": {
-                        "200": {
-                            "$ref": "#/responses/SuccessResponse"
-                        }
+                }
+            }
+        },
+        "/state/cumulative": {
+            "get": {
+                "operationId": "state_get_cumulative_report",
+                "description": "get cumulative report for state api",
+                "security": [{
+                    "oauth": [
+                        "read"
+                    ]
+                }],
+                "parameters": [{
+                    "$ref": "#/parameters/TillDateParameter"
+                }],
+                "responses": {
+                    "200": {
+                        "$ref": "#/responses/StateCumulativeResponse"
                     }
-                },
-                "delete": {
-                    "summary": "Deletes a todo",
-                    "description": "Deletes a todo.",
-                    "operationId": "delete_todo",
-                    "security": [
-                        {
-                            "oauth": [
-                                "delete"
-                            ]
-                        }
-                    ],
-                    "responses": {
-                        "200": {
-                            "$ref": "#/responses/SuccessResponse"
-                        }
+                }
+            }
+        },
+        "/state/day_wise_report": {
+            "get": {
+                "operationId": "state_get_day_wise_report",
+                "description": "get day wise report for state api",
+                "security": [{
+                    "oauth": [
+                        "read"
+                    ]
+                }],
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "$ref": "#/responses/StateDayWiseResponse"
+                    }
+                }
+            }
+        },
+        "/state/day_wise_report_with_districts": {
+            "get": {
+                "operationId": "state_get_day_wise_report_with_districts",
+                "description": "get day wise report for state api",
+                "security": [{
+                    "oauth": [
+                        "read"
+                    ]
+                }],
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "$ref": "#/responses/StateDayWiseResponseDistricts"
+                    }
+                }
+            }
+        },
+        "/state/day_report": {
+            "get": {
+                "operationId": "state_get_day_report",
+                "description": "get day report for state api",
+                "security": [{
+                    "oauth": [
+                        "read"
+                    ]
+                }],
+                "parameters": [{
+                    "$ref": "#/parameters/DateParameter"
+                }],
+                "responses": {
+                    "200": {
+                        "$ref": "#/responses/StateDayReportResponse"
                     }
                 }
             }
         }
     }
-    
+}
