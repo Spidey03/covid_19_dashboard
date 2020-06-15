@@ -171,7 +171,7 @@
         "StateDayWiseReport": {
             "type": "object",
             "properties": {
-                "daily_cumulative ": {
+                "daily_cumulative": {
                     "type": "array",
                     "items": {
                         "type": "object",
@@ -206,8 +206,7 @@
                         ]
                     }
                 }
-            },
-            "required": ["daily_cumulative"]
+            }
         },
         "StateDayWiseReportWithDistricts": {
             "type": "object",
@@ -224,7 +223,7 @@
                         "district_name": {
                             "type": "string"
                         },
-                        "daily_cumulative ": {
+                        "daily_cumulative": {
                             "type": "array",
                             "items": {
                                 "type": "object",
@@ -260,7 +259,7 @@
                             }
                         }
                     },
-                    "required": ["district_id", "district_name", "daily_cumulative"]
+                    "required": ["district_id", "district_name"]
                 }
 
             },
@@ -349,7 +348,7 @@
             "schema": {
                 "$ref": "#/definitions/StateDayWiseReport"
             }
-        },
+        }
     },
     "paths": {
         "/login/v1": {
