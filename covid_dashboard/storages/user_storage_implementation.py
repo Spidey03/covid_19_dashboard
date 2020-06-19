@@ -9,14 +9,14 @@ class UserStorageImplementation(UserStorageInterface):
     def check_is_user_name_valid(self, username: str):
         try:
             User.objects.get(username=username)
-        except User.DoesNotExists:
+        except User.DoesNotExist:
             raise InvalidUserName
 
 
     def check_is_password_valid(self, username: str, password: str):
         try:
             user = User.objects.get(username=username)
-        except User.DoesNotExists:
+        except User.DoesNotExist:
             raise InvalidUserName
     
         is_valid_password = user.check_password(password)
