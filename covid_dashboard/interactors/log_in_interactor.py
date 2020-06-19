@@ -20,11 +20,11 @@ class LogInInteractor:
 
         try:
             user_token_dto = self.login(user_name, password)
+            return presenter.login_response(user_token_dto)
         except InvalidUserName:
             presenter.raise_invalid_user_name()
         except InvalidPassword:
             presenter.raise_invalid_password()
-        return presenter.login_response(user_token_dto)
 
     def login(self, user_name: str, password: str):
         self.storage.check_is_user_name_valid(user_name)

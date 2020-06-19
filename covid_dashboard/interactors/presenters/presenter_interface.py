@@ -1,6 +1,6 @@
 from abc import ABC
 from abc import abstractmethod
-
+from covid_dashboard.interactors.storages.dtos import *
 
 class PresenterInterface(ABC):
 
@@ -14,4 +14,17 @@ class PresenterInterface(ABC):
 
     @abstractmethod
     def login_response(self, user_token_dto):
+        pass
+
+    @abstractmethod
+    def raise_invalid_state_id(self, state_id: int):
+        pass
+
+    @abstractmethod
+    def raise_invalid_date_format(self):
+        pass
+
+    @abstractmethod
+    def response_state_cumulative_report(self, 
+            state_cumulative_report_dto: CompleteStateCumulativeReportDto):
         pass
