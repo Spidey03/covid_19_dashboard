@@ -59,7 +59,8 @@ class TestStateGetCumulativeReportInteractor:
         storage.get_state_details.assert_called_once_with(state_id=state_id)
 
     def test_when_valid_details_are_given_returns_response(self, state_dto,
-            district_report_dtos, state_cumulative_report_response, district_dtos):
+            district_report_dtos, state_cumulative_report_response,
+            complete_state_cumulative_report_dto, district_dtos):
 
         # Arrange
         state_id = 1
@@ -84,5 +85,6 @@ class TestStateGetCumulativeReportInteractor:
 
         # Assert
         storage.get_state_details.assert_called_once_with(state_id=state_id)
+        presenter.response_state_cumulative_report.assert_called_once_with(complete_state_cumulative_report_dto)
         assert response == expected_response
 

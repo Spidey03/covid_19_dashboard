@@ -2,7 +2,8 @@ import datetime
 from abc import ABC
 from typing import List
 from abc import abstractmethod
-from covid_dashboard.models import State, District, Stats
+from django.db.models import Sum, F, Prefetch, Max, Min
+from covid_dashboard.models import State, District, Mandal, Stats
 from covid_dashboard.interactors.storages.state_storage_interface \
     import StateStorageInterface
 from covid_dashboard.exceptions.exceptions import InvalidStateId
@@ -10,6 +11,18 @@ from covid_dashboard.interactors.storages.dtos \
     import StateDto, DistrictDto, DistrictReportDto
 
 class StateStorageImplementation(StateStorageInterface):
+
+    def _extract_report(self, report) -> tuple:
+
+        total_confirmed = report['total_confirmed']
+        total_deaths = report['total_deaths']
+        total_recovered = report['total_recovered']
+        return total_confirmed, total_recovered, total_deaths
+
+    def _get_next_report(self, report_query_set, index: int):
+        if index < len(report_query_set):
+            return report_query_set[index], index+1
+        return {'district_id':None}, index+1
 
     def get_state_details(self, state_id: int) -> StateDto:
         try:
@@ -37,4 +50,36 @@ class StateStorageImplementation(StateStorageInterface):
 
     def get_cumulative_report_for_districts(self, district_ids: List[int],
             till_date: datetime.date) -> List[DistrictReportDto]:
-        pass
+
+        report_query_set = \
+            Mandal.objects.values('district_id')\
+                  .filter(district_id__in=district_ids,
+                      stats__date__lte=till_date)\
+                  .annotate(
+                        total_confirmed=Sum('stats__total_confirmed'),
+                        total_recovered=Sum('stats__total_recovered'),
+                        total_deaths=Sum('stats__total_deaths')
+                    ).order_by('district_id')
+        print(report_query_set)
+        return self._convert_to_district_report_dto(
+            report_query_set=report_query_set, district_ids=district_ids)
+
+    def _convert_to_district_report_dto(self, report_query_set,
+            district_ids: List[int]):
+        district_report_dto_list = []
+        index = 0
+        report, index = self._get_next_report(report_query_set, index)
+        for district_id in district_ids:
+            total_confirmed, total_recovered, total_deaths = 0, 0, 0
+            if district_id == report['district_id']:
+                total_confirmed, total_recovered, total_deaths = \
+                    self._extract_report(report)
+                report, index = self._get_next_report(report_query_set, index)
+            district_report_dto = DistrictReportDto(
+                district_id=district_id,
+                total_confirmed=total_confirmed,
+                total_recovered=total_recovered,
+                total_deaths=total_deaths
+            )
+            district_report_dto_list.append(district_report_dto)
+        return district_report_dto_list

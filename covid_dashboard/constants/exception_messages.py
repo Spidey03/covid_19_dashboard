@@ -13,3 +13,7 @@ INVALID_DATE_FORMAT = (
 INVALID_DATE = (
     "invalid date", "INVALID_DATE"
 )
+
+INVALID_STATE_ID = (
+    "invalid state id", "INVALID_STATE_ID"
+)

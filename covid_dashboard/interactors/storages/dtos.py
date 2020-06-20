@@ -35,11 +35,6 @@ class TotalReportDto:
     total_deaths: int
     active_cases: int
 
-# @dataclass
-# class StateCumulativeReportDto:
-#     state: StateDto
-#     districts: List[DistrictDto]
-#     reports: List[DistrictReportDto]
 
 @dataclass
 class CompleteStateCumulativeReportDto:
