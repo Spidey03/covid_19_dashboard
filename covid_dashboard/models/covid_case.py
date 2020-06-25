@@ -23,7 +23,7 @@ class ValidateNumbers:
 
 class Stats(models.Model):
     mandal = models.ForeignKey(Mandal, on_delete=models.CASCADE)
-    date = models.DateField(default=datetime.date.today())
+    date = models.DateField()
     total_confirmed = models.IntegerField(default=0,
         validators=[ValidateNumbers.validate_total_confirmed])
     total_deaths=models.IntegerField(default=0,
