@@ -1,6 +1,6 @@
+import datetime
 from typing import List
 from dataclasses import dataclass
-
 
 @dataclass
 class StateDto:
@@ -42,3 +42,18 @@ class CompleteStateCumulativeReportDto:
     districts: List[DistrictDto]
     district_reports: List[DistrictTotalReportDto]
     state_cumulative_report: TotalReportDto
+
+@dataclass
+class DayReportDto:
+    date: datetime.date
+    total_confirmed: int
+    total_recovered: int
+    total_deaths: int
+
+@dataclass
+class DayWiseReportDto:
+    date: datetime.date
+    total_confirmed: int
+    total_recovered: int
+    total_deaths: int
+    active_cases: int

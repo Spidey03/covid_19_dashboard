@@ -1,4 +1,5 @@
 import pytest
+import datetime
 from covid_dashboard.interactors.storages.dtos import *
 
 
@@ -102,5 +103,101 @@ def state_cumulative_report_response():
         "total_deaths": 3,
         "total_recovered_cases": 1,
         "active_cases": 6
+    }
+    return expected_output
+
+
+@pytest.fixture()
+def state_daily_report_dtos():
+    daily_report_dtos = [
+        DayReportDto(
+            date=datetime.date(year=2020, month=5, day=2),
+            total_confirmed=10,
+            total_recovered=5,
+            total_deaths=1
+        ),
+        DayReportDto(
+            date=datetime.date(year=2020, month=5, day=4),
+            total_confirmed=5,
+            total_recovered=3,
+            total_deaths=1
+        ),
+        DayReportDto(
+            date=datetime.date(year=2020, month=5, day=5),
+            total_confirmed=2,
+            total_recovered=1,
+            total_deaths=0
+        )
+    ]
+    return daily_report_dtos
+
+@pytest.fixture()
+def state_day_wise_report_dtos():
+    day_wise_report_dtos = [
+        DayWiseReportDto(
+            date=datetime.date(year=2020, month=5, day=2),
+            total_confirmed=10,
+            total_recovered=5,
+            total_deaths=1,
+            active_cases=4
+        ),
+        DayWiseReportDto(
+            date=datetime.date(year=2020, month=5, day=3),
+            total_confirmed=10,
+            total_recovered=5,
+            total_deaths=1,
+            active_cases=4
+        ),
+        DayWiseReportDto(
+            date=datetime.date(year=2020, month=5, day=4),
+            total_confirmed=15,
+            total_recovered=8,
+            total_deaths=2,
+            active_cases=5
+        ),
+        DayWiseReportDto(
+            date=datetime.date(year=2020, month=5, day=5),
+            total_confirmed=17,
+            total_recovered=9,
+            total_deaths=2,
+            active_cases=6
+        )
+    ]
+    return day_wise_report_dtos
+
+@pytest.fixture()
+def state_day_wise_report_response():
+
+    expected_output = {
+        "daily_cumulative":[
+            {
+                "date":"2020-05-02",
+                "total_cases": 10,
+                "total_deaths": 5,
+                "total_recovered_cases": 1,
+                "active_cases": 4
+            },
+            {
+                "date":"2020-05-03",
+                "total_cases": 10,
+                "total_deaths": 5,
+                "total_recovered_cases": 1,
+                "active_cases": 4
+            },
+            {
+                "date":"2020-05-04",
+                "total_cases": 5,
+                "total_deaths": 3,
+                "total_recovered_cases": 1,
+                "active_cases": 1
+            },
+            {
+                "date":"2020-05-05",
+                "total_cases": 2,
+                "total_deaths": 1,
+                "total_recovered_cases": 0,
+                "active_cases": 1
+            }
+        ]
     }
     return expected_output

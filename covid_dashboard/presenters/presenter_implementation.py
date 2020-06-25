@@ -7,6 +7,10 @@ from covid_dashboard.interactors.presenters.presenter_interface \
 
 class PresenterImplementation(PresenterInterface):
 
+    def _convert_date(self, date):
+        return str(date.strftime('%d-%b-%Y'))
+        # return str(cumulative_report.date.strftime('%d-%b-%Y'))
+
     def raise_invalid_user_name(self):
         raise NotFound(*INVALID_USERNAME)
 
@@ -64,3 +68,17 @@ class PresenterImplementation(PresenterInterface):
                 "active_cases":district_report_dto.active_cases,
             })
         return district_report_list
+
+    def resonse_state_day_wise_report(self,
+            day_wise_report_dtos: List[DayWiseReportDto]):
+
+        day_wise_report_list = []
+        for day_wise_report_dto in day_wise_report_dtos:
+            day_wise_report_list.append({
+                "date":self._convert_date(day_wise_report_dto.date),
+                "total_cases": day_wise_report_dto.total_confirmed,
+                "total_recovered_cases": day_wise_report_dto.total_recovered,
+                "total_deaths": day_wise_report_dto.total_deaths,
+                "active_cases": day_wise_report_dto.active_cases
+            })
+        return {"daily_cumulative":day_wise_report_list}

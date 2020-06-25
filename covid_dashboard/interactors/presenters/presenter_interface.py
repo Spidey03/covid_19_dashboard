@@ -28,3 +28,8 @@ class PresenterInterface(ABC):
     def response_state_cumulative_report(self, 
             state_cumulative_report_dto: CompleteStateCumulativeReportDto):
         pass
+
+    @abstractmethod
+    def resonse_state_day_wise_report(self,
+            day_wise_report_dtos: List[DayWiseReportDto]):
+        pass

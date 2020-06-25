@@ -80,3 +80,38 @@ def complete_state_cumulative_report_dto(state_dto, district_dtos, district_tota
         )
     )
     return complete_state_cumulative_report_dto
+
+
+@pytest.fixture()
+def state_day_wise_report_dtos():
+    day_wise_report_dtos = [
+        DayWiseReportDto(
+            date=datetime.date(year=2020, month=5, day=2),
+            total_confirmed=10,
+            total_recovered=5,
+            total_deaths=1,
+            active_cases=4
+        ),
+        DayWiseReportDto(
+            date=datetime.date(year=2020, month=5, day=3),
+            total_confirmed=10,
+            total_recovered=5,
+            total_deaths=1,
+            active_cases=4
+        ),
+        DayWiseReportDto(
+            date=datetime.date(year=2020, month=5, day=4),
+            total_confirmed=15,
+            total_recovered=8,
+            total_deaths=2,
+            active_cases=5
+        ),
+        DayWiseReportDto(
+            date=datetime.date(year=2020, month=5, day=5),
+            total_confirmed=17,
+            total_recovered=9,
+            total_deaths=2,
+            active_cases=6
+        )
+    ]
+    return day_wise_report_dtos

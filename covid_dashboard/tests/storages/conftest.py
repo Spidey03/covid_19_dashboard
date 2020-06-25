@@ -119,6 +119,6 @@ def stats():
         Stats(mandal_id=7, total_confirmed=1, total_recovered=0,
             total_deaths=0, date=datetime.date(year=2020, month=5, day=26)),
         Stats(mandal_id=7, total_confirmed=3, total_recovered=1,
-            total_deaths=1, date=datetime.date(year=2020, month=5, day=27)),
+            total_deaths=1, date=datetime.date(year=2020, month=5, day=27))
     ])
     return stats

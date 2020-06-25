@@ -8,7 +8,7 @@ from covid_dashboard.interactors.storages.state_storage_interface \
     import StateStorageInterface
 from covid_dashboard.exceptions.exceptions import InvalidStateId
 from covid_dashboard.interactors.storages.dtos \
-    import StateDto, DistrictDto, DistrictReportDto
+    import StateDto, DistrictDto, DistrictReportDto, DayReportDto
 
 class StateStorageImplementation(StateStorageInterface):
 
@@ -23,6 +23,18 @@ class StateStorageImplementation(StateStorageInterface):
         if index < len(report_query_set):
             return report_query_set[index], index+1
         return {'district_id':None}, index+1
+
+    def check_state_id_is_valid(self, state_id):
+        is_state_id_valid = State.objects.get(id=state_id).exists
+        is_not_state_id_valid = not is_state_id_valid
+        if is_not_state_id_valid:
+            raise InvalidStateId
+
+    def get_initial_and_final_dates(self):
+        dates = Stats.objects.aggregate(initial_date=Min('date'),
+            final_date=Max('date'))
+        return dates['initial_date'], dates['final_date']
+
 
     def get_state_details(self, state_id: int) -> StateDto:
         try:
@@ -83,3 +95,31 @@ class StateStorageImplementation(StateStorageInterface):
             )
             district_report_dto_list.append(district_report_dto)
         return district_report_dto_list
+
+    def state_get_day_wise_report(self, state_id: int) -> List[DayReportDto]:
+
+        report_query_set = Stats.objects.values(
+                'mandal__district__state_id', 'date'
+            ).annotate(
+                total_confirmed=Sum('total_confirmed'),
+                total_recovered=Sum('total_recovered'),
+                total_deaths=Sum('total_deaths')
+            ).order_by('date')
+
+        return self._convert_to_daily_report_dto_list(report_query_set)
+
+    def _convert_to_daily_report_dto_list(self, report_query_set):
+
+        daily_report_dto_list = []
+        for report in report_query_set:
+            total_confirmed, total_recovered, total_deaths = \
+                    self._extract_report(report)
+            daily_report_dto_list.append(
+                DayReportDto(
+                    date=report['date'],
+                    total_confirmed=total_confirmed,
+                    total_recovered=total_recovered,
+                    total_deaths=total_deaths
+                )
+            )
+        return daily_report_dto_list
