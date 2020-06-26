@@ -168,42 +168,45 @@
                 }
             ]
         },
+        "DayReport": {
+            "type": "object",
+            "properties": {
+                "date": {
+                    "type": "string",
+                    "format": "date"
+                },
+                "total_cases": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "total_deaths": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "total_recovered_cases": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "active_cases": {
+                    "type": "integer",
+                    "format": "int64"
+                }
+            },
+            "required": [
+                "date",
+                "total_cases",
+                "total_deaths",
+                "total_recovered_cases",
+                "active_cases"
+            ]
+        },
         "StateDayWiseReport": {
             "type": "object",
             "properties": {
                 "daily_cumulative": {
                     "type": "array",
                     "items": {
-                        "type": "object",
-                        "properties": {
-                            "date": {
-                                "type": "string",
-                                "format": "date"
-                            },
-                            "total_cases": {
-                                "type": "integer",
-                                "format": "int64"
-                            },
-                            "total_deaths": {
-                                "type": "integer",
-                                "format": "int64"
-                            },
-                            "total_recovered_cases": {
-                                "type": "integer",
-                                "format": "int64"
-                            },
-                            "active_cases": {
-                                "type": "integer",
-                                "format": "int64"
-                            }
-                        },
-                        "required": [
-                            "date",
-                            "total_cases",
-                            "total_deaths",
-                            "total_recovered_cases",
-                            "active_cases"
-                        ]
+                        "$ref": "#/definitions/DayReport"
                     }
                 }
             }
@@ -346,7 +349,7 @@
         "StateDayReportResponse": {
             "description": "state day report response",
             "schema": {
-                "$ref": "#/definitions/StateDayWiseReport"
+                "$ref": "#/definitions/DayReport"
             }
         }
     },

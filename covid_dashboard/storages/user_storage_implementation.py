@@ -13,12 +13,16 @@ class UserStorageImplementation(UserStorageInterface):
             raise InvalidUserName
 
 
-    def check_is_password_valid(self, username: str, password: str):
+    def check_is_password_valid(self, username: str, password: str) -> int:
         try:
             user = User.objects.get(username=username)
         except User.DoesNotExist:
             raise InvalidUserName
-    
+        print("*7"*10)
+        print(user.password)
         is_valid_password = user.check_password(password)
+        print(is_valid_password)
+        print("*7"*10)
         if not is_valid_password:
             raise InvalidPassword
+        return user.id

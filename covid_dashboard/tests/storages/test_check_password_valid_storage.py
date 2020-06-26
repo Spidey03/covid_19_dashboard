@@ -33,7 +33,7 @@ def test_check_username_valid_when_user_exists_and_password_correct(user):
     # Arrange
     username = 'Loki'
     password = 'Asgardian84'
-    expected_result = None
+    expected_result = 1
     
     user_storage = UserStorageImplementation()
 
