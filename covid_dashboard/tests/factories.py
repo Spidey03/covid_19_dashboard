@@ -22,10 +22,10 @@ class StateFactory(factory.django.DjangoModelFactory):
 class DistrictFactory(factory.django.DjangoModelFactory):
 
     class Meta:
-        model = models.State
+        model = models.District
 
     name = factory.Sequence(lambda id: f'district{id}')
-    state = factory.Iterator(models.State.objects.all())
+    state = factory.SubFactory(StateFactory)
 
 class MandalFactory(factory.django.DjangoModelFactory):
 
@@ -33,14 +33,15 @@ class MandalFactory(factory.django.DjangoModelFactory):
         model = models.Mandal
 
     name = factory.Sequence(lambda id: f'mandal{id}')
-    district = factory.Iterator(models.District.objects.all())
+    district = factory.SubFactory(DistrictFactory)
 
 class StatsFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = models.Stats
 
-    date = factory.LazyFunction(datetime.date)
     total_confirmed = 5
     total_recovered = 3
     total_deaths = 1
+    date = factory.LazyFunction(datetime.date)
+    mandal_id = factory.SubFactory(MandalFactory)

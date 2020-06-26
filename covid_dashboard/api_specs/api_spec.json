@@ -410,7 +410,7 @@
         "/state/day_wise_report_with_districts": {
             "get": {
                 "operationId": "state_get_day_wise_report_with_districts",
-                "description": "get day wise report for state api",
+                "description": "get day wise report for districts of a state api",
                 "security": [{
                     "oauth": [
                         "read"

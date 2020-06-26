@@ -20,6 +20,9 @@ class ValidationMixin:
 
     def validate_date_format(self, date: datetime.date):
 
+        format_str = '%Y-%m-%d'
+        datetime_obj = datetime.datetime.strptime(date, format_str)
+        date = datetime_obj.date()
         if type(date) != datetime.date:
             raise InvalidDateFormat()
 

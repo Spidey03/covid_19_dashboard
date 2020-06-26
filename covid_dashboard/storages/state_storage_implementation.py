@@ -25,7 +25,7 @@ class StateStorageImplementation(StateStorageInterface):
         return {'district_id':None}, index+1
 
     def check_state_id_is_valid(self, state_id):
-        is_state_id_valid = State.objects.get(id=state_id).exists
+        is_state_id_valid = State.objects.filter(id=state_id).exists()
         is_not_state_id_valid = not is_state_id_valid
         if is_not_state_id_valid:
             raise InvalidStateId
