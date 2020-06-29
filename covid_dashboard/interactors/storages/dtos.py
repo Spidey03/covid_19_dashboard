@@ -57,3 +57,13 @@ class DayWiseReportDto:
     total_recovered: int
     total_deaths: int
     active_cases: int
+
+@dataclass
+class DistrictDayReportDto(DayReportDto):
+    district_id: int
+
+@dataclass
+class DistrictDayWiseReportDto:
+    district_id: int
+    district_name: str
+    day_wise_reports: List[DayWiseReportDto]

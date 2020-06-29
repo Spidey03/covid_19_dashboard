@@ -4,12 +4,13 @@ from covid_dashboard.interactors.presenters.presenter_interface \
     import PresenterInterface
 from covid_dashboard.interactors.storages.state_storage_interface \
     import StateStorageInterface
-from covid_dashboard.interactors.mixins.extract_report \
-    import ExtractReport
 from covid_dashboard.interactors.storages.dtos import DistrictReportDto, \
     DistrictTotalReportDto, TotalReportDto, CompleteStateCumulativeReportDto
 from covid_dashboard.interactors.mixins.validations import ValidationMixin
-from covid_dashboard.exceptions.exceptions import *
+from covid_dashboard.interactors.mixins.extract_report \
+    import ExtractReport
+from covid_dashboard.exceptions.exceptions \
+    import InvalidStateId, InvalidDateFormat
 
 
 class StateGetCumulativeReportInteractor(ValidationMixin, ExtractReport):

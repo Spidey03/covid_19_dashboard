@@ -6,10 +6,10 @@ from covid_dashboard.interactors.storages.state_storage_interface \
     import StateStorageInterface
 from covid_dashboard.interactors.mixins.extract_report \
     import ExtractReport
+from covid_dashboard.exceptions.exceptions import InvalidStateId
 from covid_dashboard.interactors.mixins.validations import ValidationMixin
 from covid_dashboard.interactors.storages.dtos \
     import DayReportDto, DayWiseReportDto
-from covid_dashboard.exceptions.exceptions import *
 
 
 class StateGetDaywiseReportInteractor:

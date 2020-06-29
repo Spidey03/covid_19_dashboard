@@ -41,7 +41,7 @@ class TestStateGetCumulativeReportInteractor:
 
         # Arrange
         state_id = 1
-        till_date = "25-02-2020"
+        till_date = "2020-02-02"
 
         storage = create_autospec(StateStorageInterface)
         presenter = create_autospec(PresenterInterface)
@@ -65,7 +65,8 @@ class TestStateGetCumulativeReportInteractor:
         # Arrange
         state_id = 1
         district_ids = [1, 2]
-        till_date = datetime.date.today()
+        till_date  = "25-02-2020"
+       # till_date = str(datetime.date.today().strftime('%d-%m-Y'))
         expected_response = state_cumulative_report_response
 
         storage = create_autospec(StateStorageInterface)

@@ -8,7 +8,8 @@ from covid_dashboard.interactors.storages.state_storage_interface \
     import StateStorageInterface
 from covid_dashboard.exceptions.exceptions import InvalidStateId
 from covid_dashboard.interactors.storages.dtos \
-    import StateDto, DistrictDto, DistrictReportDto, DayReportDto
+    import StateDto, DistrictDto, DistrictReportDto, DayReportDto, \
+        DistrictDayReportDto
 
 class StateStorageImplementation(StateStorageInterface):
 
@@ -123,3 +124,33 @@ class StateStorageImplementation(StateStorageInterface):
                 )
             )
         return daily_report_dto_list
+
+    def get_day_wise_report_for_distrcts(self,
+            district_ids: List[int]) -> DistrictDayReportDto:
+
+        report_query_set = Stats.objects.values(
+                'mandal__district_id', 'date'
+            ).annotate(
+                district_id = F('mandal__district_id'),
+                total_confirmed=Sum('total_confirmed'),
+                total_recovered=Sum('total_recovered'),
+                total_deaths=Sum('total_deaths')
+            ).order_by('district_id', 'date')
+        print(report_query_set)
+
+        return self._convert_to_district_day_report_dtos(report_query_set)
+
+    def _convert_to_district_day_report_dtos(self, report_query_set):
+
+        district_day_report_dtos = []
+        for report in report_query_set:
+            district_day_report_dtos.append(
+                DistrictDayReportDto(
+                    date=report['date'],
+                    district_id=report['district_id'],
+                    total_confirmed=report['total_confirmed'],
+                    total_recovered=report['total_recovered'],
+                    total_deaths=report['total_deaths']
+                )
+            )
+        return district_day_report_dtos

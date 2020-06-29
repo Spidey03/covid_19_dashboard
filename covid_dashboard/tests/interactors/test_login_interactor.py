@@ -23,7 +23,7 @@ expected_user_auth_token_dto = UserAuthTokensDTO(
 
 def test_login_interactor_with_invalid_user_name_raises_invalid_user_name():
     # Arange
-    user_name = "parker"
+    username = "parker"
     password = "12345"
 
     storage = create_autospec(UserStorageInterface)
@@ -39,13 +39,13 @@ def test_login_interactor_with_invalid_user_name_raises_invalid_user_name():
 
     # Act
     with pytest.raises(InvalidUserName):
-        interactor.login_wrapper(user_name=user_name, password=password,
+        interactor.login_wrapper(username=username, password=password,
             presenter=presenter)
 
 
 def test_login_interactor_with_invalid_password_raises_invalid_password():
     # Arange
-    user_name = "parker"
+    username = "parker"
     password = "12345"
 
     storage = create_autospec(UserStorageInterface)
@@ -61,7 +61,7 @@ def test_login_interactor_with_invalid_password_raises_invalid_password():
 
     # Act
     with pytest.raises(InvalidPassword):
-        interactor.login_wrapper(user_name=user_name, password=password,
+        interactor.login_wrapper(username=username, password=password,
             presenter=presenter)
 
 
@@ -71,7 +71,7 @@ def test_login_interactor_with_valid_details_returns_token_dto(bbc):
     # Arange
     import datetime
     from common.dtos import UserAuthTokensDTO
-    user_name = "parker"
+    username = "parker"
     password = "12345"
     expected_user_auth_token_dto = UserAuthTokensDTO(
         user_id=1,
@@ -98,7 +98,7 @@ def test_login_interactor_with_valid_details_returns_token_dto(bbc):
     )
 
     # Act
-    response = interactor.login_wrapper(user_name=user_name,
+    response = interactor.login_wrapper(username=username,
         password=password, presenter=presenter)
 
     # Assert

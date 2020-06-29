@@ -33,3 +33,8 @@ class PresenterInterface(ABC):
     def resonse_state_day_wise_report(self,
             day_wise_report_dtos: List[DayWiseReportDto]):
         pass
+
+    @abstractmethod
+    def response_day_wise_report_with_districts(self, 
+            all_district_reports: List[DistrictDayWiseReportDto]):
+        pass
