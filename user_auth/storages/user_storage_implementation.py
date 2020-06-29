@@ -1,9 +1,9 @@
 from abc import ABC
 from abc import abstractmethod
-from covid_dashboard.models import User
-from covid_dashboard.interactors.storages.user_storage_interface\
+from user_auth.models import User
+from user_auth.interactors.storages.user_storage_interface\
     import UserStorageInterface
-from covid_dashboard.exceptions.exceptions\
+from user_auth.exceptions.exceptions\
     import InvalidUserName, InvalidPassword
 
 

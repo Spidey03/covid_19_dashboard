@@ -1,10 +1,9 @@
 
-from covid_dashboard.models.places\
-    import Mandal, District, State
-from covid_dashboard.models.covid_case import Stats
 
 
-__all__ = ["Mandal","District","State", "Stats"]
+
+from user_auth.models.user import User
+__all__ = ["User"]
 
 # class DummyModel(AbstractDateTimeModel):
 #     """
