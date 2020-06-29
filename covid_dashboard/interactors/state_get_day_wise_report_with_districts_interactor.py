@@ -24,11 +24,12 @@ class StateGetDayWiseReportWithDistrictsInteractor(ValidationMixin):
             presenter: PresenterInterface, state_id=1):
 
         try:
-            all_district_reports = \
+            state_dto, all_district_reports = \
                 self.state_get_day_wise_report_with_districts(
                     state_id=state_id)
-            return presenter.response_day_wise_report_with_districts(
-                all_district_reports)
+            response = presenter.response_state_day_wise_report_with_districts(
+                state_dto, all_district_reports)
+            return response
         except InvalidStateId:
             presenter.raise_invalid_state_id(state_id=state_id)
 
@@ -43,8 +44,7 @@ class StateGetDayWiseReportWithDistrictsInteractor(ValidationMixin):
         all_district_reports = \
             self._convert_to_district_day_wise_reports(
                 district_dtos=district_dtos, day_report_dtos=day_report_dtos)
-        print(all_district_reports)
-        return all_district_reports
+        return state_dto, all_district_reports
 
 
     def _convert_to_district_day_wise_reports(self,

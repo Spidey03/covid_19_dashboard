@@ -115,3 +115,155 @@ def state_day_wise_report_dtos():
         )
     ]
     return day_wise_report_dtos
+
+
+@pytest.fixture()
+def district_day_wise_reports_of_a_state():
+    district_day_wise_reports= [
+        DistrictDayWiseReportDto(
+            district_id=1,
+            district_name='Kurnool',
+            day_wise_reports = [
+                DayWiseReportDto(
+                    date=datetime.date(year=2020, month=5, day=2),
+                    total_confirmed=0,
+                    total_recovered=0,
+                    total_deaths=0,
+                    active_cases=0
+                ),
+                DayWiseReportDto(
+                    date=datetime.date(year=2020, month=5,day=3),
+                    total_confirmed=0,
+                    total_recovered=0,
+                    total_deaths=0,
+                    active_cases=0
+                ),
+                DayWiseReportDto(
+                    date=datetime.date(year=2020, month=5, day=4),
+                    total_confirmed=10,
+                    total_recovered=5,
+                    total_deaths=1,
+                    active_cases=4
+                ),
+                DayWiseReportDto(
+                    date=datetime.date(year=2020, month=5, day=5),
+                    total_confirmed=10,
+                    total_recovered=5,
+                    total_deaths=1,
+                    active_cases=4,
+                )
+            ]
+        ),
+        DistrictDayWiseReportDto(
+            district_id=2,
+            district_name='Nellore',
+            day_wise_reports=[
+                DayWiseReportDto(
+                    date=datetime.date(year=2020, month=5, day=2),
+                    total_confirmed=0,
+                    total_recovered=0,
+                    total_deaths=0,
+                    active_cases=0
+                ),
+                DayWiseReportDto(
+                    date=datetime.date(year=2020, month=5,day=3),
+                    total_confirmed=3,
+                    total_recovered=0,
+                    total_deaths=1,
+                    active_cases=2
+                ),
+                DayWiseReportDto(
+                    date=datetime.date(year=2020, month=5,day=4),
+                    total_confirmed=3,
+                    total_recovered=0,
+                    total_deaths=1,
+                    active_cases=2
+                ),
+                DayWiseReportDto(
+                    date=datetime.date(year=2020, month=5,day=5),
+                    total_confirmed=4,
+                    total_recovered=0,
+                    total_deaths=1,
+                    active_cases=3
+                )
+            ]
+        )
+    ]
+    return district_day_wise_reports
+
+@pytest.fixture()
+def response_state_day_wise_report_with_districts():
+    expected_response = {
+        'state_name': 'Andrapradesh',
+        'districts': [
+            {
+                'district_id': 1,
+                'district_name': 'Kurnool',
+                'daily_cumulative': [
+                    {
+                        'date': '02-May-2020',
+                        'total_cases': 0,
+                        'total_recovered_cases': 0,
+                        'total_deaths': 0,
+                        'active_cases': 0
+                    },
+                    {
+                        'date': '03-May-2020',
+                        'total_cases': 0,
+                        'total_recovered_cases': 0,
+                        'total_deaths': 0,
+                        'active_cases': 0
+                    },
+                    {
+                        'date': '04-May-2020',
+                        'total_cases': 10,
+                        'total_recovered_cases': 5,
+                        'total_deaths': 1,
+                        'active_cases': 4
+                    },
+                    {
+                        'date': '05-May-2020',
+                        'total_cases': 10,
+                        'total_recovered_cases': 5,
+                        'total_deaths': 1,
+                        'active_cases': 4
+                    }
+                ]
+            },
+            {
+                'district_id': 2,
+                'district_name': 'Nellore',
+                'daily_cumulative': [
+                    {
+                        'date': '02-May-2020',
+                        'total_cases': 0,
+                        'total_recovered_cases': 0,
+                        'total_deaths': 0,
+                        'active_cases': 0
+                    },
+                    {
+                        'date': '03-May-2020',
+                        'total_cases': 3,
+                        'total_recovered_cases': 0,
+                        'total_deaths': 1,
+                        'active_cases': 2
+                    },
+                    {
+                        'date': '04-May-2020',
+                        'total_cases': 3,
+                        'total_recovered_cases': 0,
+                        'total_deaths': 1,
+                        'active_cases': 2
+                    },
+                    {
+                        'date': '05-May-2020',
+                        'total_cases': 4,
+                        'total_recovered_cases': 0,
+                        'total_deaths': 1,
+                        'active_cases': 3
+                    }
+                ]
+            }
+        ]
+    }
+    return expected_response

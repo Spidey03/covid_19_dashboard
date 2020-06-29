@@ -149,7 +149,7 @@
                     "type": "object",
                     "properties": {
                         "state_name": {
-                            "type": "string"
+                            "type": "string "
                         },
                         "districts": {
                             "type": "array",

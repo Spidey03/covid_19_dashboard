@@ -1,9 +1,11 @@
+from typing import List
 from django_swagger_utils.drf_server.exceptions \
     import NotFound, BadRequest, Forbidden
 from covid_dashboard.constants.exception_messages import *
 from covid_dashboard.interactors.storages.dtos import *
 from covid_dashboard.interactors.presenters.presenter_interface \
     import PresenterInterface
+
 
 class PresenterImplementation(PresenterInterface):
 
@@ -40,7 +42,7 @@ class PresenterImplementation(PresenterInterface):
         state_report = state_cumulative_report_dto.state_cumulative_report
 
         distri_report_list = \
-            self._conver_district_dto_list(
+            self._convert_district_dto_list(
                 district_report_dto_list, district_dtos_list)
         response = {
             "state_name": state.state_name,
@@ -52,7 +54,7 @@ class PresenterImplementation(PresenterInterface):
         }
         return response
 
-    def _conver_district_dto_list(self, district_report_dto_list, district_dto_list):
+    def _convert_district_dto_list(self, district_report_dto_list, district_dto_list):
 
         district_report_list = []
         for district_report_dto in district_report_dto_list:
@@ -82,3 +84,30 @@ class PresenterImplementation(PresenterInterface):
                 "active_cases": day_wise_report_dto.active_cases
             })
         return {"daily_cumulative":day_wise_report_list}
+
+    def response_state_day_wise_report_with_districts(self, state_dto: StateDto,
+            all_district_reports: List[DistrictDayWiseReportDto]):
+
+        districts = []
+        for district_day_wise_report_dto in all_district_reports:
+            district_reports = []
+            for report in district_day_wise_report_dto.day_wise_reports:
+                district_reports.append(self._convert_to_day_report(report))
+            districts.append({
+                "district_id": district_day_wise_report_dto.district_id,
+                "district_name": district_day_wise_report_dto.district_name,
+                "daily_cumulative":district_reports
+            })
+        return({
+            "state_name": state_dto.state_name,
+            "districts": districts
+        })
+
+    def _convert_to_day_report(self, report: DayWiseReportDto):
+        return({
+            "date": self._convert_date(report.date),
+            "total_cases": report.total_confirmed,
+            "total_recovered_cases": report.total_recovered,
+            "total_deaths": report.total_deaths,
+            "active_cases": report.active_cases
+        })

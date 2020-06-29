@@ -33,7 +33,7 @@ class TestGetDayWiseReportWithDistricts:
             datetime.date(year=2020, month=5, day=2), \
             datetime.date(year=2020, month=5, day=5)
         storage.get_day_wise_report_for_distrcts.return_value = district_day_report_dtos
-        presenter.response_day_wise_report_with_districts.return_value = \
+        presenter.response_state_day_wise_report_with_districts.return_value = \
             response_district_day_wise_reports_of_a_state
 
         # Act
@@ -46,6 +46,7 @@ class TestGetDayWiseReportWithDistricts:
             state_id=state_id)
         storage.get_day_wise_report_for_distrcts.assert_called_once_with(
             district_ids=district_ids)
-        presenter.response_day_wise_report_with_districts. \
-            assert_called_once_with(district_day_wise_reports_of_a_state)
+        presenter.response_state_day_wise_report_with_districts. \
+            assert_called_once_with(state_dto=state_dto,
+                all_district_reports =district_day_wise_reports_of_a_state)
         assert output == expected_output
