@@ -57,20 +57,6 @@ class TestStateGetDayWiseReportWithDistricts:
                 total_recovered=3,
                 total_deaths=5,
                 district_id=2
-            ),
-            DistrictDayReportDto(
-                date=datetime.date(2020, 5, 26),
-                total_confirmed=1,
-                total_recovered=0,
-                total_deaths=0,
-                district_id=3
-            ),
-            DistrictDayReportDto(
-                date=datetime.date(2020, 5, 27),
-                total_confirmed=3,
-                total_recovered=1,
-                total_deaths=1,
-                district_id=3
             )
         ]
 
