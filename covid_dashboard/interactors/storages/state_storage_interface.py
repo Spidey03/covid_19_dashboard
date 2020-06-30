@@ -35,3 +35,8 @@ class StateStorageInterface(ABC):
     def get_day_wise_report_for_distrcts(self,
             district_ids: List[int]) -> DistrictDayReportDto:
         pass
+
+    @abstractmethod
+    def get_day_report_districts(self,
+            district_ids: List[int], date) -> List[DistrictDayReportDto]:
+        pass

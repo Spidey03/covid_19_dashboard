@@ -380,3 +380,55 @@ def response_district_day_wise_reports_of_a_state():
         ]
     }
     return expected_output
+
+@pytest.fixture()
+def day_report_dtos():
+    day_report_dtos = [
+        DistrictDayReportDto(
+            district_id=1,
+            date=datetime.date(year=2020, month=5, day=2),
+            total_confirmed=10,
+            total_recovered=5,
+            total_deaths=1
+        ),
+        DistrictDayReportDto(
+            district_id=1,
+            date=datetime.date(year=2020, month=5, day=2),
+            total_confirmed=5,
+            total_recovered=2,
+            total_deaths=1
+        ),
+    ]
+    return day_report_dtos
+
+@pytest.fixture()
+def state_day_report_dto(day_report_dtos):
+    state_day_report_dto = StateDayReportDto(
+        state_name="Andrapradesh",
+        district_reports=day_report_dtos,
+        total_confirmed=15,
+        total_recovered=7,
+        total_deaths=2
+    )
+    return state_day_report_dto
+
+@pytest.fixture()
+def response_state_day_report_dto():
+    expected_output = {
+        "state_name": "Andrapradesh",
+        "districts":[
+            {
+                "district_id":1,
+                "total_cases": 10,
+                "total_recovered_cases": 5,
+                "total_deaths": 1,
+            },
+            {
+                "district_id":2,
+                "total_cases": 5,
+                "total_recovered_cases": 2,
+                "total_deaths": 1,
+            }
+        ]
+    }
+    return expected_output

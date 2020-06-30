@@ -111,3 +111,28 @@ class PresenterImplementation(PresenterInterface):
             "total_deaths": report.total_deaths,
             "active_cases": report.active_cases
         })
+
+    def response_state_day_report(self,
+            state_day_report_dto: StateDayReportDto):
+
+        response = {
+            "state_name":state_day_report_dto.state_name,
+            "total_cases": state_day_report_dto.total_confirmed,
+            "total_recovered_cases": state_day_report_dto.total_recovered,
+            "total_deaths": state_day_report_dto.total_deaths,
+            "districts": self._convert_to_district_reports(
+                state_day_report_dto.district_reports)
+        }
+        return response
+
+    def _convert_to_district_reports(self, district_reports):
+
+        district_report_list = []
+        for report in district_reports:
+            district_report_list.append({
+                "district_id": report.district_id,
+                "total_cases": report.total_confirmed,
+                "total_recovered_cases": report.total_recovered,
+                "total_deaths": report.total_deaths,
+            })
+        return district_report_list

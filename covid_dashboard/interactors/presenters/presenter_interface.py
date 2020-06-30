@@ -38,3 +38,8 @@ class PresenterInterface(ABC):
     def response_state_day_wise_report_with_districts(self, state_dto: StateDto,
             all_district_reports: List[DistrictDayWiseReportDto]):
         pass
+
+    @abstractmethod
+    def response_state_day_report(self,
+            state_get_day_report: StateDayReportDto):
+        pass

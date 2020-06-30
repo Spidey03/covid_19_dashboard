@@ -77,8 +77,8 @@
                 "response": {
                     "type": "string",
                     "enum": [
-                        "invalid username",
-                        "invalid password"
+                        "INVALID USERNAME",
+                        "INVALID PASSWORD"
                     ]
                 }
             }
@@ -149,7 +149,7 @@
                     "type": "object",
                     "properties": {
                         "state_name": {
-                            "type": "string "
+                            "type": "string"
                         },
                         "districts": {
                             "type": "array",
@@ -168,7 +168,7 @@
                 }
             ]
         },
-        "DayReport": {
+        "DayTotalReport": {
             "type": "object",
             "properties": {
                 "date": {
@@ -206,7 +206,7 @@
                 "daily_cumulative": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/DayReport"
+                        "$ref": "#/definitions/DayTotalReport"
                     }
                 }
             }
@@ -270,7 +270,63 @@
                 "state_name",
                 "districts"
             ]
-        }
+        },
+        "StateDayReport": {
+            "type": "object",
+            "properties": {
+                "state_name": {
+                    "type": "string"
+                },
+                "districts": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "district_id": {
+                                "type": "integer",
+                                "format": "int64"
+                            },
+                            "total_cases": {
+                                "type": "integer",
+                                "format": "int64"
+                            },
+                            "total_deaths": {
+                                "type": "integer",
+                                "format": "int64"
+                            },
+                            "total_recovered_cases": {
+                                "type": "integer",
+                                "format": "int64"
+                            }
+                        },
+                        "required": [
+                            "district_id",
+                            "total_cases",
+                            "total_deaths",
+                            "total_recovered_cases"
+                        ]
+                    }
+                },
+                "total_cases": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "total_deaths": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "total_recovered_cases": {
+                    "type": "integer",
+                    "format": "int64"
+                }
+            },
+            "required": [
+                "state_name",
+                "total_cases",
+                "total_deaths",
+                "total_recovered_cases"
+            ]
+        },
     },
     "parameters": {
         "StateIdParameter": {
@@ -349,7 +405,7 @@
         "StateDayReportResponse": {
             "description": "state day report response",
             "schema": {
-                "$ref": "#/definitions/DayReport"
+                "$ref": "#/definitions/StateDayReport"
             }
         }
     },

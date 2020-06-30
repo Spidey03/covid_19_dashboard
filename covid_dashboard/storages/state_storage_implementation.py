@@ -128,6 +128,7 @@ class StateStorageImplementation(StateStorageInterface):
     def get_day_wise_report_for_distrcts(self,
             district_ids: List[int]) -> DistrictDayReportDto:
 
+        print(district_ids)
         report_query_set = Stats.objects.values(
                 'mandal__district_id', 'date'
             ).annotate(
@@ -135,15 +136,20 @@ class StateStorageImplementation(StateStorageInterface):
                 total_confirmed=Sum('total_confirmed'),
                 total_recovered=Sum('total_recovered'),
                 total_deaths=Sum('total_deaths')
-            ).order_by('district_id', 'date')
-        print(report_query_set)
+            ).filter(mandal__district_id__in=district_ids)\
+             .order_by('district_id', 'date')
+        # print(report_query_set)
 
         return self._convert_to_district_day_report_dtos(report_query_set)
 
     def _convert_to_district_day_report_dtos(self, report_query_set):
 
         district_day_report_dtos = []
+        print(len(report_query_set))
         for report in report_query_set:
+            print('-='*30)
+            print(report)
+            print('-='*30)
             district_day_report_dtos.append(
                 DistrictDayReportDto(
                     date=report['date'],
@@ -154,3 +160,19 @@ class StateStorageImplementation(StateStorageInterface):
                 )
             )
         return district_day_report_dtos
+
+    def get_day_report_districts(self,
+            district_ids: List[int], date) -> List[DistrictDayReportDto]:
+        report_query_set = Stats.objects.values('mandal__district_id') \
+                                .annotate(
+                                    date = F('date'),
+                                    district_id = F('mandal__district_id'),
+                                    total_confirmed=Sum('total_confirmed'),
+                                    total_recovered=Sum('total_recovered'),
+                                    total_deaths=Sum('total_deaths')
+                                ).filter(
+                                    mandal__district_id__in=district_ids,
+                                    date=date
+                                ).order_by('mandal__district_id')
+        print(report_query_set)
+        return self._convert_to_district_day_report_dtos(report_query_set)
