@@ -1,10 +1,11 @@
 
+from django_swagger_utils.drf_server.exceptions \
+    import NotFound, Forbidden
 from common.dtos import UserAuthTokensDTO
 from covid_dashboard.constants.exception_messages \
     import INVALID_USERNAME, INVALID_PASSWORD, USER_NOT_ADMIN
 from covid_dashboard.interactors.presenters.presenter_interface\
     import PresenterInterface
-from django_swagger_utils.drf_server.exceptions import NotFound, Forbidden
 
 
 class PresenterImplementation(PresenterInterface):
