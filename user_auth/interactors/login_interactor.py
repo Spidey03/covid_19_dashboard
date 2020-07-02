@@ -1,9 +1,9 @@
-from covid_dashboard.interactors.storages.user_storage_interface\
+from user_auth.interactors.storages.user_storage_interface\
     import UserStorageInterface
-from covid_dashboard.interactors.presenters.presenter_interface\
+from user_auth.interactors.presenters.presenter_interface\
     import PresenterInterface
 from common.oauth2_storage import OAuth2SQLStorage
-from covid_dashboard.exceptions.exceptions\
+from user_auth.exceptions.exceptions\
     import InvalidUserName, InvalidPassword
 
 

@@ -41,7 +41,7 @@ def api_wrapper(*args, **kwargs):
     interactor = AddNewStatistics(storage=storage, presenter=presenter)
     try:
         interactor.add_new_statistics(mandal_id=mandal_id,
-            user=user,
+            user_id=user.id,
             date=date, total_confirmed=total_confirmed,
             total_deaths=total_deaths,
             total_recovered=total_recovered)
