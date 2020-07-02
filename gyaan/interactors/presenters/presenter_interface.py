@@ -1,41 +1,52 @@
 from abc import ABC
 from abc import abstractmethod
-from gyaan.interactors.storages.dtos \
-    import DomainDetailsDto, CompletePostDetailsDto, DomainDetailsWithPostsDto
 
+from gyaan.interactors.storages.dtos import (
+    PostsCompleteDto,
+    DomainExpertDetailsPresenterDto,
+)
+
+from gyaan.interactors.storages.dtos_v2 import (
+    PostCompleteDetailsPresenterDto,
+    PresenterDomainPostsDto, TagDto
+)
 
 class PresenterInterface(ABC):
 
     @abstractmethod
-    def raise_domain_does_not_exists(self):
-        pass
-
-
-    @abstractmethod
-    def raise_user_not_follower(self):
+    def raise_invalid_username_exception(self):
         pass
 
     @abstractmethod
-    def get_response_for_domain_details(self, domain_details_dto: DomainDetailsDto):
+    def raise_invalid_password_exception(self):
         pass
 
     @abstractmethod
-    def raise_invalid_post_ids_exception(self):
+    def sign_in_response(self, user_auth_tokens_dto):
         pass
 
     @abstractmethod
-    def response_get_posts(self, complete_post_details_dto: CompletePostDetailsDto):
+    def raise_exception_for_invalid_post_id(self):
         pass
 
     @abstractmethod
-    def raise_invalid_value_for_offset(self):
-        pass
-    
-    @abstractmethod
-    def raise_invalid_value_for_limit(self):
+    def raise_exception_for_invalid_comment_id(self):
         pass
 
     @abstractmethod
-    def response_get_domain_details_with_posts(self,
-            domain_details_with_posts: DomainDetailsWithPostsDto):
+    def raise_exception_for_invalid_domain_id(self):
+        pass
+
+    @abstractmethod
+    def get_user_metrics_response(self, user_domain_post_metrics_dto):
+        pass
+
+    @abstractmethod
+    def get_posts_response(self, all_posts_details_dto: PostsCompleteDto):
+        pass
+
+    @abstractmethod
+    def get_domain_metrics_response(
+            self, domain_expert_details_presenter_dto: \
+                DomainExpertDetailsPresenterDto):
         pass

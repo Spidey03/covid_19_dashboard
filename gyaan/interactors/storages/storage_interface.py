@@ -1,78 +1,107 @@
-from abc import ABC
-from abc import abstractmethod
+from abc import ABC, abstractmethod
+
+from gyaan.interactors.storages.dtos import (
+    PostsCompleteDto
+)
 from typing import List
-from gyaan.interactors.storages.dtos import *
 
 class StorageInterface(ABC):
 
     @abstractmethod
-    def check_domain_is_valid(self, domain_id: int):
+    def validate_post_id(self, post_id: int):
         pass
 
     @abstractmethod
-    def get_domain_details(self, domain_id: int) -> DomainDto:
+    def validate_comment_id(self, comment_id: int):
         pass
 
     @abstractmethod
-    def check_user_is_follower_of_domain(self, user_id: int, domain_id: int) -> bool:
+    def validate_username(self, username: str):
         pass
 
     @abstractmethod
-    def get_domain_stats(self, domain_id: int) -> DomainStatDto:
+    def validate_password_for_username(
+            self, username: str, password: str) -> int:
         pass
 
     @abstractmethod
-    def get_domain_expert_ids(self, domain_id: int) -> List[int]:
+    def get_user_id(self, username: str, password: str):
         pass
 
     @abstractmethod
-    def get_users_details(self, ids: List[int]) -> List[UserDto]:
+    def get_user_metrics(self):
         pass
 
     @abstractmethod
-    def is_user_domain_expert(self, user_id: int, domain_id: int) -> bool:
+    def get_posts(self, limti: int, offset: int) -> PostsCompleteDto:
         pass
 
     @abstractmethod
-    def get_domain_join_request(self, domain_id: int) -> List[DomainJoinRequestDto]:
+    def get_latest_comments(self, post_id: int):
         pass
 
     @abstractmethod
-    def get_valid_post_ids(self, post_ids: List[int]) -> List[int]:
+    def get_reply_dtos(self, comment_id: int):
         pass
 
     @abstractmethod
-    def get_post_details(self, post_ids: List[int]) -> List[PostDto]:
+    def get_answer_dto(self, post_id: int):
         pass
 
     @abstractmethod
-    def get_posts_tags(self, post_ids: List[int]) -> List[PostTagDetailsDto]:
+    def get_reaction_status(self, user_id: int, post_id: int):
         pass
 
     @abstractmethod
-    def get_post_reactions_count(self, post_ids: List[int]) -> List[PostReactionsCount]:
+    def get_post_tags(self, post_id: int):
         pass
 
     @abstractmethod
-    def get_post_comments_count(self, post_ids: List[int]) -> List[PostCommentsCount]:
+    def get_user_dto(self, user_id: int):
         pass
 
     @abstractmethod
-    def get_posts_latest_comments(self, post_ids: List[int], limit: int) -> List[int]:
+    def get_following_domain_dtos(self, user_id: int):
         pass
 
     @abstractmethod
-    def get_comments_reactions_count(self, comment_ids: List[int]) -> List[CommentReactionsCount]:
+    def get_some_domain_dtos(self, user_id: int):
         pass
 
     @abstractmethod
-    def get_comments_replies_count(self, comment_ids: List[int]) -> List[CommentRepliesCount]:
+    def get_user_requested_domain_dtos(self, user_id: int):
         pass
 
     @abstractmethod
-    def get_comments(self, comment_ids: List[int]) -> List[CommentDto]:
+    def get_approved_posts_in_each_domain_dtos(self, user_id: int):
         pass
 
     @abstractmethod
-    def get_domain_post_ids(self, domain_id: int, offset: int, limit: int) -> List[int]:
+    def get_pending_posts_in_each_domain_dtos(self, user_id: int):
+        pass
+
+    @abstractmethod
+    def create_reaction_to_comment(self, user_id: int, entity_id: str):
+        pass
+
+    @abstractmethod
+    def get_parent_comment_id(self, comment_id: int) -> int:
+        pass
+
+    @abstractmethod
+    def create_reaction_to_post(self, user_id: int, entity_id: str):
+        pass
+
+    @abstractmethod
+    def create_comment_to_post(self, user_id: int, entity_id: int,
+                               content: str):
+        pass
+
+    @abstractmethod
+    def create_reply_to_comment(self, user_id: int, entity_id: int,
+                               content: str):
+        pass
+
+    @abstractmethod
+    def mark_as_answer(self, user_id: int, comment_id: int):
         pass

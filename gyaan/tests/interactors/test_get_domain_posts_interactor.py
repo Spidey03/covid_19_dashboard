@@ -1,140 +1,108 @@
-import pytest
-from mock import create_autospec
-from unittest.mock import patch
-from gyaan.interactors.get_domain_posts_interactor \
-    import GetDomainPostsInteractor
-from gyaan.interactors.get_posts_interactor \
-    import GetPostsInteractor
-from gyaan.interactors.storages.storage_interface \
-    import StorageInterface
-from gyaan.interactors.presenters.presenter_interface \
-    import PresenterInterface
-from gyaan.interactors.storages.dtos import DomainDetailsDto
-from gyaan.exceptions.exceptions \
-    import DomainNotExists, UserIsNotFollwerOfDomain
-from django_swagger_utils.drf_server.exceptions \
-    import NotFound, BadRequest, Forbidden
+from unittest.mock import create_autospec
+
+from gyaan.interactors.storages.post_storage_interface \
+    import PostStorageInterface
+from gyaan.interactors.presenters.post_presenter_interface \
+    import PostPresenterInterface
+from gyaan.interactors.get_post_interactor \
+    import GetPostInteractor
+from gyaan.interactors.get_post_interactor import GetPostInteractor
+
+from gyaan.interactors.storages.dtos_v2 import (
+    UserDto, PostDto, DomainDto, CommentDto, ReactionDto, TagDto,
+    PostDetailsDto, PostCompleteDetailsPresenterDto, PresenterCommentDto,
+    PresenterReplyDto, DomainPostsDetailsDto, PresenterDomainPostsDto,
+    PostDetailsWithMetricsDto
+)
 
 
-class TestGetDomainPosts():
+def test_get_post_interactor_with_valid_post_id():
+    # Arrange
+    domain_id=1
+    user_id=1
+    posts_dto = [PostDto(
+        user_id=1,
+        post_id=1,
+        domain_id=1,
+        title="first_post",
+        description="first_post",
+        posted_at="datetime"
+    )]
+    domains_dto =  [DomainDto(
+        domain_id=1,
+        name="django",
+        description="django",
+        picture="django.com",
+        experts=None,
+        members=None
+    )]
+    users_dto = [UserDto(user_id=1, name="user1", profile_pic="user1.com"),
+                 UserDto(user_id=2, name="user2", profile_pic="user2.com"),
+                 UserDto(user_id=3, name="user3", profile_pic="user3.com")]
 
-    def test_when_domain_not_exists_raise_exception_domain_not_exist(self):
-        # Arrange
-        user_id, domain_id = 5, 3
-        offset, limit = 0, 5
+    comments_dto = [CommentDto(comment_id=1,content="comment1",user_id=2,
+                    is_answer=True,post_id=1,commented_at="datetime",
+                    parent_comment=None, approved_by_id=1),
+                    CommentDto(comment_id=2,content="comment2",user_id=3,
+                    is_answer=False,post_id=1,commented_at="datetime",
+                    parent_comment=1, approved_by_id=None)]
 
-        storage = create_autospec(StorageInterface)
-        presenter = create_autospec(PresenterInterface)
+    reactions_dto = [ReactionDto(reaction_id=1, post_id=1, comment_id=None,
+                     user_id=2)]
 
-        storage.check_domain_is_valid.side_effect = DomainNotExists
-        presenter.raise_domain_does_not_exists.side_effect = NotFound
-        interactor = GetDomainPostsInteractor(storage=storage)
+    tags_dto = [TagDto(tag_id=1, name="tag1", post_id=1, domain_id=1)]
 
-        # Act
-        with pytest.raises(NotFound):
-            interactor.get_domain_posts_wrapper(user_id=user_id,
-                domain_id=domain_id, offset=offset, limit=limit,
-                presenter=presenter)
+    domain_posts_dto = DomainPostsDetailsDto(posts_dto=posts_dto,
+                                      domains_dto=domains_dto,
+                                      users_dto=users_dto,
+                                      comments_dto=comments_dto,
+                                      reactions_dto=reactions_dto,
+                                      tags_dto=tags_dto
+                                      )
 
-        # Assert
-        storage.check_domain_is_valid.assert_called_once_with(domain_id=domain_id)
+    expected_output = PresenterDomainPostsDto(
+        domain_posts_details_dto=domain_posts_dto,
+        posts_details_with_metrics_dto=[PostDetailsWithMetricsDto(
+            post_id=1,
+            is_user_reacted=False,
+            post_reactions_count=1,
+            approved_answer_dto=CommentDto(comment_id=1,content="comment1",user_id=2,
+                    is_answer=True,post_id=1,commented_at="datetime",
+                    parent_comment=None, approved_by_id=1),
+            comments_count=1,
+            parent_comments_with_replies_dto=[
+                PresenterCommentDto(
+                    comment_dto=comments_dto[0],
+                    replies_dto=[PresenterReplyDto(
+                                reply_dto=comments_dto[1],
+                                reactions_count=0
+                    )],
+                    replies_count=1,
+                    reactions_count=0
+            )]
+        )]
+    )
 
-    def test_when_user_is_not_follower_of_domain_raise_exception_user_is_not_follower(self):
-        # Arrange
-        user_id, domain_id = 5, 3
-        offset, limit = 0, 5
+    post_storage = create_autospec(PostStorageInterface)
+    post_presenter = create_autospec(PostPresenterInterface)
+    interactor = GetPostInteractor(
+        post_storage=post_storage,
+        post_presenter=post_presenter
+    )
 
-        storage = create_autospec(StorageInterface)
-        presenter = create_autospec(PresenterInterface)
+    post_storage.get_domain_posts_details_dto.return_value = domain_posts_dto
+    post_presenter.get_domain_posts_response.return_value = expected_output
 
-        storage.check_domain_is_valid.return_value = None
-        storage.check_user_is_follower_of_domain.return_value = False
-        presenter.raise_user_not_follower.side_effect = Forbidden
-        interactor = GetDomainPostsInteractor(storage=storage)
+    # Act
+    actual_output = interactor.get_domain_posts(
+        user_id=user_id, domain_id=domain_id)
 
-        # Act
-        with pytest.raises(Forbidden):
-            interactor.get_domain_posts_wrapper(user_id=user_id,
-                domain_id=domain_id, offset=offset, limit=limit,
-                presenter=presenter)
+    # Assert
+    assert actual_output == expected_output
 
-        # Assert
-        storage.check_domain_is_valid.assert_called_once_with(domain_id=domain_id)
-        storage.check_user_is_follower_of_domain.assert_called_once_with(
-            user_id=user_id, domain_id=domain_id)
-
-    def test_when_invalid_offset_value_given_raise_exception_invalid_value_for_offset(self):
-        # Arrange
-        user_id, domain_id = 5, 3
-        offset, limit = -1, 5
-
-        storage = create_autospec(StorageInterface)
-        presenter = create_autospec(PresenterInterface)
-
-        storage.check_domain_is_valid.return_value = None
-        storage.check_user_is_follower_of_domain.return_value = True
-        presenter.raise_invalid_value_for_offset.side_effect = BadRequest
-        interactor = GetDomainPostsInteractor(storage=storage)
-
-        # Act
-        with pytest.raises(BadRequest):
-            interactor.get_domain_posts_wrapper(user_id=user_id,
-                domain_id=domain_id, offset=offset, limit=limit,
-                presenter=presenter)
-
-        # Assert
-        storage.check_domain_is_valid.assert_called_once_with(domain_id=domain_id)
-        storage.check_user_is_follower_of_domain.assert_called_once_with(
-            user_id=user_id, domain_id=domain_id)
-
-    def test_when_invalid_limit_value_given_raise_exception_invalid_value_for_offset(self):
-        # Arrange
-        user_id, domain_id = 5, 3
-        offset, limit = 5, 2
-
-        storage = create_autospec(StorageInterface)
-        presenter = create_autospec(PresenterInterface)
-
-        storage.check_domain_is_valid.return_value = None
-        storage.check_user_is_follower_of_domain.return_value = True
-        presenter.raise_invalid_value_for_limit.side_effect = BadRequest
-        interactor = GetDomainPostsInteractor(storage=storage)
-
-        # Act
-        with pytest.raises(BadRequest):
-            interactor.get_domain_posts_wrapper(user_id=user_id,
-                domain_id=domain_id, offset=offset, limit=limit,
-                presenter=presenter)
-
-        # Assert
-        storage.check_domain_is_valid.assert_called_once_with(domain_id=domain_id)
-        storage.check_user_is_follower_of_domain.assert_called_once_with(
-            user_id=user_id, domain_id=domain_id)
-
-    @patch.object(GetPostsInteractor, 'get_posts')
-    def test_when_valid_details_given(self, response_get_posts, post_complete_details):
-        # Arrange
-        user_id, domain_id = 5, 3
-        offset, limit = 0, 5
-        expected_output = response_get_posts
-
-        storage = create_autospec(StorageInterface)
-        presenter = create_autospec(PresenterInterface)
-
-        storage.check_domain_is_valid.return_value = None
-        storage.check_user_is_follower_of_domain.return_value = True
-        GetPostsInteractor.get_posts.return_value = post_complete_details
-        presenter.response_get_posts.return_value = expected_output
-        interactor = GetDomainPostsInteractor(storage=storage)
-
-        # Act
-        output = interactor.get_domain_posts_wrapper(user_id=user_id,
-            domain_id=domain_id, offset=offset, limit=limit,
-            presenter=presenter)
-
-        # Assert
-        storage.check_domain_is_valid.assert_called_once_with(domain_id=domain_id)
-        storage.check_user_is_follower_of_domain.assert_called_once_with(
-            user_id=user_id, domain_id=domain_id)
-        presenter.response_get_posts.assert_called_once_with(post_complete_details)
-        assert output == expected_output
+    post_storage.get_domain_posts_details_dto.assert_called_once_with(
+        domain_id=domain_id
+    )
+    post_presenter.get_domain_posts_response.assert_called_once_with(
+        presenter_domain_posts_dto=expected_output
+    )

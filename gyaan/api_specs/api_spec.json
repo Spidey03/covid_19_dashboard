@@ -1,212 +1,1145 @@
 {
-        "swagger": "2.0",
-        "host": "127.0.0.1:8000",
-        "basePath": "/api/gyaan/",
-        "info": {
-            "version": "1.0.0",
-            "title": "Simple API",
-            "description": "A simple API to learn how to write OpenAPI Specification"
-        },
-        "schemes": [
-            "http"
-        ],
-        "consumes": [
-            "application/json"
-        ],
-        "produces": [
-            "application/json"
-        ],
-        "securityDefinitions": {
-            "oauth": {
-                "tokenUrl": "http://auth.ibtspl.com/oauth2/",
-                "flow": "password",
-                "scopes": {
-                    "read": "read users",
-                    "write": "create users",
-                    "update": "update users",
-                    "delete": "delete users"
+    "swagger": "2.0",
+    "info": {
+        "description": "Gyaan - a knowledge-sharing platform that facilitates knowledge sharing among employees of an organization. A platform like this saves a huge amount of time for an organization in the development and training of its employees for new skills and also in day to day tasks.",
+        "version": "1.0.0",
+        "title": "Gyaan - A Knowledge Sharing Platform API"
+    },
+    "host": "virtserver.swaggerhub.com",
+    "basePath": "/Gyaan1/Gyaan/1.0.0",
+    "schemes": ["https", "http"],
+    "consumes": ["application/json"],
+    "produces": ["application/json"],
+    "paths": {
+        "/sign_up/v1/": {
+            "post": {
+                "summary": "Display singn-up page",
+                "description": "Display the sign-up page with username, email,password",
+                "operationId": "sign_up",
+                "parameters": [{
+                    "in": "body",
+                    "name": "CreateNewUser",
+                    "description": "create a new user with given fields",
+                    "required": false,
+                    "schema": {
+                        "$ref": "#/definitions/SignUp"
+                    }
+                }],
+                "responses": {
+                    "201": {
+                        "description": "Created user"
+                    },
+                    "400": {
+                        "description": "Bad Request"
+                    }
                 },
-                "type": "oauth2"
+                "security": []
             }
         },
-        "security": [],
-        "definitions": {
-            "TodoId": {
+        "/sign_in/v1/": {
+            "post": {
+                "summary": "Display signin page",
+                "description": "Display the sign-in page with username and password",
+                "operationId": "sign_in",
+                "parameters": [{
+                    "in": "body",
+                    "name": "SignIn",
+                    "description": "signing in an user with username and password",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/SignIn"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/AccessToken"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid Username"
+                    }
+                },
+                "security": []
+            }
+        },
+        "/user/metrics/v1/": {
+            "get": {
+                "summary": "Domain and Post metrics of user",
+                "description": "Domain and post calculations of user",
+                "operationId": "get_user_metrics",
+                "parameters": [],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/UserFeed"
+                        }
+                    }
+                },
+                "security": [{
+                    "oauth": ["read"]
+                }]
+            }
+        },
+        "/posts/v1/": {
+            "get": {
+                "summary": "Show recent data of the posts",
+                "description": "",
+                "operationId": "get_posts",
+                "parameters": [{
+                    "name": "limit",
+                    "in": "query",
+                    "description": "no of posts to be viwed from offset",
+                    "required": true,
+                    "type": "integer"
+                }, {
+                    "name": "offset",
+                    "in": "query",
+                    "description": "no of posts to be skipped from top",
+                    "required": true,
+                    "type": "integer"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Post"
+                            }
+                        }
+                    }
+                },
+                "security": [{
+                    "oauth": ["read"]
+                }]
+            }
+        },
+        "/domain/{domain_id}/metrics/v1/": {
+            "get": {
+                "summary": "Data related to a domain",
+                "description": "Recent posts in that domain",
+                "operationId": "get_domain",
+                "parameters": [{
+                    "name": "domain_id",
+                    "in": "path",
+                    "description": "domain_id of a domain to be fetch",
+                    "required": true,
+                    "type": "integer"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/DomainFeed"
+                        }
+                    },
+                    "404": {
+                        "description": "Not Found"
+                    }
+                },
+                "security": [{
+                    "oauth": ["read"]
+                }]
+            }
+        },
+        "/{entity_type}/{entity_id}/react/v1/": {
+            "post": {
+                "summary": "Create New Domain",
+                "description": "Create a new domain by expert",
+                "operationId": "create_reaction",
+                "parameters": [{
+                    "name": "entity_type",
+                    "in": "path",
+                    "description": "Resource type to create reaction",
+                    "required": true,
+                    "type": "string",
+                    "enum": ["post", "comment", "reply", "domain"]
+                }, {
+                    "name": "entity_id",
+                    "in": "path",
+                    "description": "Resource type to create reaction",
+                    "required": true,
+                    "type": "integer"
+                }],
+                "responses": {
+                    "201": {
+                        "description": "Successfully Created"
+                    }
+                },
+                "security": [{
+                    "oauth": ["write"]
+                }]
+            }
+        },
+        "/domains/{domain_id}/posts/v1/": {
+            "post": {
+                "summary": "Create New Post",
+                "description": "Create a new post",
+                "operationId": "create_post",
+                "parameters": [{
+                    "name": "domain_id",
+                    "in": "path",
+                    "description": "domain_id of a domain to be fetch",
+                    "required": true,
+                    "type": "integer"
+                }, {
+                    "in": "body",
+                    "name": "CreateNewPost",
+                    "description": "Required Feilds for creating a user",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/CreatePost"
+                    }
+                }],
+                "responses": {
+                    "201": {
+                        "description": "Successfully Created",
+                        "schema": {
+                            "$ref": "#/definitions/inline_response_201"
+                        }
+                    }
+                },
+                "security": [{
+                    "oauth": ["write"]
+                }]
+            }
+        },
+        "/post/{post_id}/v1/": {
+            "get": {
+                "summary": "Get post details given post_id",
+                "description": "Get an existing post details",
+                "operationId": "get_post",
+                "parameters": [{
+                    "name": "post_id",
+                    "in": "path",
+                    "description": "post_id of a post to be displayed",
+                    "required": true,
+                    "type": "integer"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/Post"
+                        }
+                    }
+                },
+                "security": [{
+                    "oauth": ["read"]
+                }]
+            }
+        },
+        "/domain/{domain_id}/posts/v1/": {
+            "get": {
+                "summary": "Get posts of a domain given domain_id",
+                "description": "Get all recent posts of a domain",
+                "operationId": "get_domain_posts",
+                "parameters": [{
+                    "name": "domain_id",
+                    "in": "path",
+                    "description": "domain_id of a domain to be fetch",
+                    "required": true,
+                    "type": "integer"
+                }, {
+                    "name": "offset",
+                    "in": "query",
+                    "description": "no of posts to be skipped from top",
+                    "required": true,
+                    "type": "integer"
+                }, {
+                    "name": "limit",
+                    "in": "query",
+                    "description": "no of posts to be viwed from offset",
+                    "required": true,
+                    "type": "integer"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Post"
+                            }
+                        }
+                    }
+                },
+                "security": [{
+                    "oauth": ["read"]
+                }]
+            }
+        },
+        "/domain/{domain_id}/tags/v1/": {
+            "get": {
+                "summary": "Get tags of a domain",
+                "description": "Get all tags of a domain given domain_id",
+                "operationId": "get_domain_tags",
+                "parameters": [{
+                    "name": "domain_id",
+                    "in": "path",
+                    "description": "domain_id of a domain to be fetch",
+                    "required": true,
+                    "type": "integer"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Success Response",
+                        "schema": {
+                            "$ref": "#/definitions/DomainTags"
+                        }
+                    }
+                },
+                "security": [{
+                    "oauth": ["read"]
+                }]
+            }
+        },
+        "/users/domains/{domain_id}/request/v1/": {
+            "post": {
+                "summary": "Request to join a domain",
+                "description": "create a domain join request",
+                "operationId": "create_join_request",
+                "parameters": [{
+                    "name": "domain_id",
+                    "in": "path",
+                    "description": "domain_id of a domain to be fetch",
+                    "required": true,
+                    "type": "integer"
+                }, {
+                    "in": "body",
+                    "name": "JoinRequest",
+                    "description": "Required Feilds for joining a domain",
+                    "required": false,
+                    "schema": {
+                        "$ref": "#/definitions/JoinRequest"
+                    }
+                }],
+                "responses": {
+                    "201": {
+                        "description": "Successfully Created"
+                    },
+                    "404": {
+                        "description": "Domain Not Found"
+                    }
+                },
+                "security": [{
+                    "oauth": ["write"]
+                }]
+            }
+        },
+        "/domain/{domain_id}/request/cancel/v1/": {
+            "delete": {
+                "summary": "cancel request to join a domain",
+                "description": "cancel a domain join request",
+                "operationId": "cancel_join_request",
+                "parameters": [{
+                    "name": "domain_id",
+                    "in": "path",
+                    "description": "domain_id of a domain to be fetch",
+                    "required": true,
+                    "type": "integer"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successfully Canceled Request"
+                    },
+                    "404": {
+                        "description": "Domain/Request Not Found"
+                    }
+                },
+                "security": [{
+                    "oauth": ["write"]
+                }]
+            }
+        },
+        "/domains/{domain_id}/leave/v1/": {
+            "post": {
+                "summary": "leave a domain",
+                "description": "leave a domain",
+                "operationId": "leave_from_domain",
+                "parameters": [{
+                    "name": "domain_id",
+                    "in": "path",
+                    "description": "domain_id of a domain to be fetch",
+                    "required": true,
+                    "type": "integer"
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successfully Created"
+                    },
+                    "404": {
+                        "description": "Domain/Membership Not Found"
+                    }
+                },
+                "security": [{
+                    "oauth": ["write"]
+                }]
+            }
+        },
+        "/domain_experts/domains/requests/v1/": {
+            "post": {
+                "summary": "approve or reject a request",
+                "description": "leave a domain",
+                "operationId": "request_status",
+                "parameters": [{
+                    "in": "body",
+                    "name": "ApproveOrReject",
+                    "description": "approve or reject domain join request",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/RequestStatus"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Successfull"
+                    }
+                },
+                "security": [{
+                    "oauth": ["write"]
+                }]
+            }
+        },
+        "/{entity_type}/{entity_id}/comment/v1/": {
+            "post": {
+                "summary": "Create New Comment",
+                "description": "Create a new comment or reply_comment",
+                "operationId": "create_comment",
+                "parameters": [{
+                    "name": "entity_type",
+                    "in": "path",
+                    "description": "Resource type to create reaction",
+                    "required": true,
+                    "type": "string",
+                    "enum": ["post", "comment", "reply", "domain"]
+                }, {
+                    "name": "entity_id",
+                    "in": "path",
+                    "description": "Resource type to create reaction",
+                    "required": true,
+                    "type": "integer"
+                }, {
+                    "in": "body",
+                    "name": "CommentContent",
+                    "description": "create a new comment with given fields",
+                    "required": true,
+                    "schema": {
+                        "$ref": "#/definitions/AddCommentOrReply"
+                    }
+                }],
+                "responses": {
+                    "201": {
+                        "description": "Successfully Created"
+                    }
+                },
+                "security": [{
+                    "oauth": ["superuser", "read"]
+                }]
+            }
+        },
+        "/post/comment/{comment_id}/marK_as_answer/v1/": {
+            "post": {
+                "summary": "Make comment as answer",
+                "description": "Make comment as answer",
+                "operationId": "create_answer",
+                "parameters": [{
+                    "name": "comment_id",
+                    "in": "path",
+                    "description": "comment_id of a comment to be fetch",
+                    "required": true,
+                    "type": "integer"
+                }],
+                "responses": {
+                    "201": {
+                        "description": "Successfully Created"
+                    }
+                },
+                "security": [{
+                    "oauth": ["superuser", "read"]
+                }]
+            }
+        }
+    },
+    "securityDefinitions": {
+        "oauth": {
+            "type": "oauth2",
+            "tokenUrl": "http://auth.ibtspl.com/oauth2/",
+            "flow": "password",
+            "scopes": {
+                "read": "read users",
+                "write": "create users",
+                "update": "update users",
+                "delete": "delete users",
+                "superuser": "super user permission"
+            }
+        }
+    },
+    "definitions": {
+        "User": {
+            "type": "object",
+            "required": ["name", "profile_pic", "user_id"],
+            "properties": {
+                "user_id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "profile_pic": {
+                    "type": "string"
+                }
+            }
+        },
+        "Post": {
+            "type": "object",
+            "required": ["comments_count", "domain", "post_id", "posted_at", "posted_by", "title"],
+            "properties": {
+                "post_id": {
+                    "type": "integer"
+                },
+                "posted_by": {
+                    "$ref": "#/definitions/User"
+                },
+                "title": {
+                    "type": "string"
+                },
+                "description": {
+                    "type": "string"
+                },
+                "posted_at": {
+                    "type": "string"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Tags"
+                    }
+                },
+                "comments_count": {
+                    "type": "integer"
+                },
+                "reactions_count": {
+                    "type": "integer"
+                },
+                "domain": {
+                    "$ref": "#/definitions/Domain"
+                },
+                "is_reacted": {
+                    "type": "boolean"
+                },
+                "approved_answer": {
+                    "type": "object",
+                    "allOf": [{
+                        "$ref": "#/definitions/CommentWithReplies"
+                    }, {
+                        "type": "object",
+                        "properties": {
+                            "approved_by": {
+                                "$ref": "#/definitions/User"
+                            }
+                        },
+                        "required": ["approved_by"]
+                    }]
+                },
+                "latest_comments": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "allOf": [{
+                            "$ref": "#/definitions/CommentWithReplies"
+                        }, {
+                            "type": "object",
+                            "properties": {
+                                "replies": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/definitions/Comment"
+                                    }
+                                }
+                            }
+                        }]
+                    }
+                }
+            }
+        },
+        "Comment": {
+            "type": "object",
+            "required": ["comment_id", "commented_at", "commented_by", "content", "is_reacted", "reactions_count"],
+            "properties": {
+                "comment_id": {
+                    "type": "integer"
+                },
+                "commented_at": {
+                    "type": "string"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "commented_by": {
+                    "$ref": "#/definitions/User"
+                },
+                "reactions_count": {
+                    "type": "integer"
+                },
+                "is_reacted": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "CommentWithReplies": {
+            "allOf": [{
+                "$ref": "#/definitions/CommentWithRepliesCount"
+            }, {
                 "type": "object",
+                "required": ["replies"],
                 "properties": {
-                    "id": {
+                    "replies": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/definitions/Comment"
+                        }
+                    }
+                }
+            }]
+        },
+        "CommentWithRepliesCount": {
+            "allOf": [{
+                "$ref": "#/definitions/Comment"
+            }, {
+                "type": "object",
+                "required": ["replies_count"],
+                "properties": {
+                    "replies_count": {
                         "type": "integer"
                     }
                 }
-            },
-            "BasicTodo": {
+            }]
+        },
+        "Domain": {
+            "type": "object",
+            "required": ["domain_id", "name"],
+            "properties": {
+                "domain_id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "picture": {
+                    "type": "string"
+                }
+            }
+        },
+        "SuggestedDomainData": {
+            "allOf": [{
+                "$ref": "#/definitions/Domain"
+            }, {
                 "type": "object",
+                "required": ["follow_request"],
+                "properties": {
+                    "follow_request": {
+                        "type": "boolean"
+                    }
+                }
+            }]
+        },
+        "UserFeed": {
+            "type": "object",
+            "properties": {
+                "user": {
+                    "$ref": "#/definitions/User"
+                },
+                "following_domains": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Domain"
+                    }
+                },
+                "suggested_domains": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/SuggestedDomainData"
+                    }
+                },
+                "user_post_metrics": {
+                    "$ref": "#/definitions/UserFeed_user_post_metrics"
+                },
+                "pending_post_metrics": {
+                    "$ref": "#/definitions/UserFeed_pending_post_metrics"
+                }
+            }
+        },
+        "RequestsToDomainExpert": {
+            "type": "object",
+            "required": ["post_review_requests", "user_requests"],
+            "properties": {
+                "post_review_requests": {
+                    "$ref": "#/definitions/RequestsToDomainExpert_post_review_requests"
+                },
+                "user_requests": {
+                    "$ref": "#/definitions/DomainFollowRequests"
+                }
+            }
+        },
+        "DomainFollowRequests": {
+            "type": "object",
+            "required": ["requests", "total_requests"],
+            "properties": {
+                "total_requests": {
+                    "type": "integer"
+                },
+                "requests": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/DomainFollowRequests_requests"
+                    }
+                }
+            }
+        },
+        "DomainWithExtraFields": {
+            "allOf": [{
+                "$ref": "#/definitions/Domain"
+            }, {
+                "type": "object",
+                "required": ["description", "experts", "is_following", "likes", "no_of_followers", "total_posts"],
                 "properties": {
                     "description": {
                         "type": "string"
                     },
-                    "is_completed": {
-                        "type": "boolean"
+                    "experts": {
+                        "$ref": "#/definitions/DomainWithExtraFields_experts"
                     },
-                    "remind_at": {
+                    "no_of_followers": {
+                        "type": "integer"
+                    },
+                    "total_posts": {
+                        "type": "integer"
+                    },
+                    "likes": {
+                        "type": "integer"
+                    },
+                    "is_following": {
+                        "type": "boolean"
+                    }
+                }
+            }]
+        },
+        "DomainFeed": {
+            "allOf": [{
+                "$ref": "#/definitions/DomainWithExtraFields"
+            }, {
+                "type": "object",
+                "required": ["domain_expert_metrics"],
+                "properties": {
+                    "domain_expert_metrics": {
+                        "$ref": "#/definitions/RequestsToDomainExpert"
+                    }
+                }
+            }]
+        },
+        "Role": {
+            "type": "object",
+            "properties": {
+                "role": {
+                    "type": "string",
+                    "enum": ["DEVELOPER", "DESIGNER"]
+                }
+            }
+        },
+        "SignIn": {
+            "type": "object",
+            "required": ["password", "username"],
+            "properties": {
+                "username": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                }
+            }
+        },
+        "SignUp": {
+            "allOf": [{
+                "$ref": "#/definitions/SignIn"
+            }, {
+                "type": "object",
+                "required": ["email", "name"],
+                "properties": {
+                    "name": {
+                        "type": "string"
+                    },
+                    "email": {
+                        "type": "string"
+                    },
+                    "description": {
                         "type": "string"
                     }
-                },
-                "required": [
-                    "description"
-                ]
-            },
-            "Todo": {
-                "allOf": [
-                    {
-                        "$ref": "#/definitions/BasicTodo"
-                    },
-                    {
-                        "$ref": "#/definitions/TodoId"
-                    }
-                ]
-            }
+                }
+            }, {
+                "$ref": "#/definitions/Role"
+            }]
         },
-        "parameters": {
-            "TodoId": {
-                "description": "todo id",
-                "in": "path",
-                "name": "id",
-                "required": true,
-                "type": "integer"
-            },
-            "BasicTodo": {
-                "description": "Todo Parameter",
-                "in": "body",
-                "name": "todo",
-                "required": true,
-                "schema": {
-                    "$ref": "#/definitions/BasicTodo"
+        "AccessToken": {
+            "type": "object",
+            "required": ["access_token", "expires_in", "refresh_token", "user_id"],
+            "properties": {
+                "user_id": {
+                    "type": "integer",
+                    "format": "int64"
+                },
+                "access_token": {
+                    "type": "string"
+                },
+                "refresh_token": {
+                    "type": "string"
+                },
+                "expires_in": {
+                    "type": "string",
+                    "format": "datetime"
                 }
             }
         },
-        "responses": {
-            "SuccessResponse": {
-                "description": "success response"
+        "CreatePost": {
+            "type": "object",
+            "required": ["content", "tag_ids", "title"],
+            "properties": {
+                "title": {
+                    "type": "string"
+                },
+                "content": {
+                    "type": "string"
+                },
+                "tag_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                }
             }
         },
-        "paths": {
-            "/todos/": {
-                "get": {
-                    "summary": "Get all todos",
-                    "description": "Returns a list containing all todos.",
-                    "operationId": "get_todos",
-                    "security": [
-                        {
-                            "oauth": [
-                                "read"
-                            ]
-                        }
-                    ],
-                    "responses": {
-                        "200": {
-                            "description": "A list of todos",
-                            "schema": {
-                                "type": "array",
-                                "items": {
-                                    "$ref": "#/definitions/Todo"
+        "Tags": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                }
+            }
+        },
+        "DomainTags": {
+            "type": "array",
+            "items": {
+                "$ref": "#/definitions/Tags"
+            }
+        },
+        "AddCommentOrReply": {
+            "type": "object",
+            "properties": {
+                "content": {
+                    "type": "string"
+                }
+            }
+        },
+        "RequestStatus": {
+            "type": "object",
+            "required": ["accept_status", "request_id"],
+            "properties": {
+                "request_id": {
+                    "type": "integer"
+                },
+                "accept_status": {
+                    "type": "string",
+                    "enum": ["accepted", "rejected"]
+                }
+            }
+        },
+        "inline_response_201": {
+            "type": "object",
+            "properties": {
+                "post_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "JoinRequest": {
+            "type": "object",
+            "required": ["request_type"],
+            "properties": {
+                "request_type": {
+                    "type": "string",
+                    "enum": ["follow", "cancel"]
+                }
+            }
+        },
+        "UserFeed_user_post_metrics": {
+            "type": "object",
+            "properties": {
+                "total_posts": {
+                    "type": "integer"
+                },
+                "posts_in_each_domain": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "allOf": [{
+                            "$ref": "#/definitions/Domain"
+                        }, {
+                            "type": "object",
+                            "properties": {
+                                "posts_count": {
+                                    "type": "integer"
                                 }
                             }
-                        }
-                    }
-                },
-                "post": {
-                    "summary": "create a todo",
-                    "description": "Create a todo",
-                    "operationId": "create_todo",
-                    "security": [
-                        {
-                            "oauth": [
-                                "write"
-                            ]
-                        }
-                    ],
-                    "parameters": [
-                        {
-                            "$ref": "#/parameters/BasicTodo"
-                        }
-                    ],
-                    "responses": {
-                        "200": {
-                            "description": "create a todo",
-                            "schema": {
-                                "$ref": "#/definitions/TodoId"
-                            }
-                        }
+                        }]
                     }
                 }
-            },
-            "/todos/{id}/": {
-                "parameters": [
-                    {
-                        "$ref": "#/parameters/TodoId"
-                    }
-                ],
-                "get": {
-                    "summary": "Get a todo",
-                    "description": "Returns a todo.",
-                    "operationId": "get_todo",
-                    "security": [
-                        {
-                            "oauth": [
-                                "read"
-                            ]
-                        }
-                    ],
-                    "responses": {
-                        "200": {
-                            "description": "A todo",
-                            "schema": {
-                                "$ref": "#/definitions/Todo"
+            }
+        },
+        "UserFeed_pending_post_metrics": {
+            "type": "object",
+            "properties": {
+                "total_review_posts": {
+                    "type": "integer"
+                },
+                "pending_for_review": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "allOf": [{
+                            "$ref": "#/definitions/Domain"
+                        }, {
+                            "type": "object",
+                            "properties": {
+                                "review_posts_count": {
+                                    "type": "integer"
+                                }
                             }
-                        }
+                        }]
                     }
+                }
+            }
+        },
+        "RequestsToDomainExpert_post_review_requests": {
+            "type": "object",
+            "required": ["pending_for_review", "total_posts"],
+            "properties": {
+                "total_posts": {
+                    "type": "integer"
                 },
-                "put": {
-                    "parameters": [
-                        {
-                            "$ref": "#/parameters/BasicTodo"
-                        }
-                    ],
-                    "summary": "Updates a todo",
-                    "description": "Updates a todo.",
-                    "operationId": "update_todo",
-                    "security": [
-                        {
-                            "oauth": [
-                                "update"
-                            ]
-                        }
-                    ],
-                    "responses": {
-                        "200": {
-                            "$ref": "#/responses/SuccessResponse"
-                        }
+                "pending_for_review": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "allOf": [{
+                            "$ref": "#/definitions/Domain"
+                        }, {
+                            "type": "object",
+                            "properties": {
+                                "review_posts_count": {
+                                    "type": "integer"
+                                }
+                            },
+                            "required": ["review_posts_count"]
+                        }]
                     }
+                }
+            }
+        },
+        "DomainFollowRequests_requests": {
+            "type": "object",
+            "required": ["name", "profile_pic", "request_id"],
+            "properties": {
+                "request_id": {
+                    "type": "integer"
                 },
-                "delete": {
-                    "summary": "Deletes a todo",
-                    "description": "Deletes a todo.",
-                    "operationId": "delete_todo",
-                    "security": [
-                        {
-                            "oauth": [
-                                "delete"
-                            ]
-                        }
-                    ],
-                    "responses": {
-                        "200": {
-                            "$ref": "#/responses/SuccessResponse"
-                        }
+                "name": {
+                    "type": "string"
+                },
+                "profile_pic": {
+                    "type": "string"
+                }
+            }
+        },
+        "DomainWithExtraFields_experts": {
+            "type": "object",
+            "required": ["domain_experts", "total_experts"],
+            "properties": {
+                "total_experts": {
+                    "type": "integer"
+                },
+                "domain_experts": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/User"
                     }
                 }
             }
         }
+    },
+    "parameters": {
+        "CreateNewUserParameter": {
+            "in": "body",
+            "name": "CreateNewUser",
+            "description": "create a new user with given fields",
+            "required": false,
+            "schema": {
+                "$ref": "#/definitions/SignUp"
+            }
+        },
+        "SignInParameter": {
+            "in": "body",
+            "name": "SignIn",
+            "description": "signing in an user with username and password",
+            "required": true,
+            "schema": {
+                "$ref": "#/definitions/SignIn"
+            }
+        },
+        "DomainIdPathParameter": {
+            "name": "domain_id",
+            "in": "path",
+            "description": "domain_id of a domain to be fetch",
+            "required": true,
+            "type": "integer"
+        },
+        "CommentIdPathParameter": {
+            "name": "comment_id",
+            "in": "path",
+            "description": "comment_id of a comment to be fetch",
+            "required": true,
+            "type": "integer"
+        },
+        "UserIdPathParameter": {
+            "name": "user_id",
+            "in": "path",
+            "description": "user_id of a user to be displayed",
+            "required": true,
+            "type": "integer"
+        },
+        "PostIdPathParameter": {
+            "name": "post_id",
+            "in": "path",
+            "description": "post_id of a post to be displayed",
+            "required": true,
+            "type": "integer"
+        },
+        "LimitParameter": {
+            "name": "limit",
+            "in": "query",
+            "description": "no of posts to be viwed from offset",
+            "required": true,
+            "type": "integer"
+        },
+        "OffsetParameter": {
+            "name": "offset",
+            "in": "query",
+            "description": "no of posts to be skipped from top",
+            "required": true,
+            "type": "integer"
+        },
+        "EntityType": {
+            "name": "entity_type",
+            "in": "path",
+            "description": "Resource type to create reaction",
+            "required": true,
+            "type": "string",
+            "enum": ["post", "comment", "reply", "domain"]
+        },
+        "EntityId": {
+            "name": "entity_id",
+            "in": "path",
+            "description": "Resource type to create reaction",
+            "required": true,
+            "type": "integer"
+        },
+        "CreateNewPostParameter": {
+            "in": "body",
+            "name": "CreateNewPost",
+            "description": "Required Feilds for creating a user",
+            "required": true,
+            "schema": {
+                "$ref": "#/definitions/CreatePost"
+            }
+        },
+        "AddCommentOrReplyParameter": {
+            "in": "body",
+            "name": "CommentContent",
+            "description": "create a new comment with given fields",
+            "required": true,
+            "schema": {
+                "$ref": "#/definitions/AddCommentOrReply"
+            }
+        },
+        "ApproveOrRejectJoinRequestParameter": {
+            "in": "body",
+            "name": "ApproveOrReject",
+            "description": "approve or reject domain join request",
+            "required": true,
+            "schema": {
+                "$ref": "#/definitions/RequestStatus"
+            }
+        },
+        "CreateOrCancelDomainJoinRequest": {
+            "name": "create_or_cancel",
+            "in": "path",
+            "description": "perform create or cancel on a request",
+            "required": true,
+            "type": "string",
+            "enum": ["create", "cancel"]
+        }
+    },
+    "responses": {
+        "SignInResponse": {
+            "description": "Success Response",
+            "schema": {
+                "$ref": "#/definitions/AccessToken"
+            }
+        },
+        "HomeFeedResponse": {
+            "description": "Success Response",
+            "schema": {
+                "type": "array",
+                "items": {
+                    "$ref": "#/definitions/Post"
+                }
+            }
+        },
+        "UserFeedResponse": {
+            "description": "Success Response",
+            "schema": {
+                "$ref": "#/definitions/UserFeed"
+            }
+        },
+        "DomainFeedResponse": {
+            "description": "Success Response",
+            "schema": {
+                "$ref": "#/definitions/DomainFeed"
+            }
+        },
+        "DomainExpertMetricsResponse": {
+            "description": "Success Response",
+            "schema": {
+                "$ref": "#/definitions/RequestsToDomainExpert"
+            }
+        },
+        "GetPostResponse": {
+            "description": "Success Response",
+            "schema": {
+                "$ref": "#/definitions/Post"
+            }
+        },
+        "GetDomainTagsResponse": {
+            "description": "Success Response",
+            "schema": {
+                "$ref": "#/definitions/DomainTags"
+            }
+        }
     }
-    
+}
