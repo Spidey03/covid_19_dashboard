@@ -8,7 +8,7 @@ def user():
     username = "Loki"
     password = "Asgardian84"
     user = User.objects.create(
-        username=username,
+        username=username
     )
     user.set_password(password)
     user.save()
